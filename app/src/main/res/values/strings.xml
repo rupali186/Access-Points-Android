@@ -1,0 +1,67 @@
+<resources>
+    <string name="app_name">AccessPoints</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="no_account">Don\'t have an account? Use Sign Up</string>
+    <string name="tab_text_1">Sign In</string>
+    <string name="tab_text_2">Sign Up</string>
+    <string-array name="categories">
+        <item>Echo &amp; Alexa</item>
+        <item>Fire Tv Stick</item>
+        <item>Kindle E-Readers &amp; eBooks</item>
+        <item>Amazon Prime Video</item>
+        <item>Amazon Prime Music</item>
+        <item>Mobiles, Computers</item>
+        <item>Tv, Appliances, Electronics</item>
+        <item>Men\'s Fashion</item>
+        <item>Women\'s Fashion</item>
+        <item>Home, Kitchen, Pets, Furniture</item>
+        <item>Sports, Fitness, Bags, Luggage</item>
+        <item>Toys,Baby Products, Kids\' Fashion</item>
+        <item>Car, Motorbike, Industrial</item>
+        <item>Books &amp; Audible</item>
+        <item>Music, Movies, Gaming, Software</item>
+        <item>Recharges &amp; Bill Payments</item>
+        <item>Gift Cards</item>
+        <item>Art, Handicraft, Collectibles</item>
+    </string-array>
+    <string-array name="productIds">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+    </string-array>
+    <string-array name="deliveryModes">
+        <item>store_del</item>
+        <item>home_del</item>
+        <item>access_points</item>
+    </string-array>
+    <string-array name="paymentStatuses">
+        <item>paid</item>
+        <item>unpaid</item>
+    </string-array>
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="title_activity_account">AccountActivity</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_target_customers">TargetCustomersActivity</string>
+
+</resources>
