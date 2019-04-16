@@ -26,6 +26,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.multilingual.rupali.accesspoints.Constants.BundleArg;
 import com.multilingual.rupali.accesspoints.Constants.LoginSharedPref;
 import com.multilingual.rupali.accesspoints.Constants.Tag;
 import com.multilingual.rupali.accesspoints.R;
@@ -34,6 +35,7 @@ import com.multilingual.rupali.accesspoints.config.APIClient;
 import com.multilingual.rupali.accesspoints.fragments.AccountDetailsFragment;
 import com.multilingual.rupali.accesspoints.fragments.CreateOrderFragment;
 import com.multilingual.rupali.accesspoints.fragments.HomeFragment;
+import com.multilingual.rupali.accesspoints.fragments.OrdersFragment;
 import com.multilingual.rupali.accesspoints.models.User;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -43,7 +45,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 public class HomeActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, CreateOrderFragment.ProgressListener {
+        implements NavigationView.OnNavigationItemSelectedListener, CreateOrderFragment.ProgressListener, OrdersFragment.ProgressListener {
     TextView nameTextView;
     TextView logInOrSignUp;
     CircleImageView loginImageView;
@@ -240,17 +242,20 @@ public class HomeActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.nav_home) {
-            HomeFragment homeFragment= new HomeFragment();
-            android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction transaction = fragmentManager.beginTransaction();
-            transaction.replace(R.id.container_main,homeFragment,"HOME").commit();
+            homeOnClick();
             toolbarTextView.setText("Home");
             exit=false;
         }else if (id == R.id.nav_create_order) {
            createOrderOnClick();
            toolbarTextView.setText("Order");
             exit=false;
+        } else if (id == R.id.nav_my_orders) {
+            myOrderOnClick();
+            toolbarTextView.setText("My Orders");
+
         } else if (id == R.id.nav_orders) {
+            allOrderOnClick();
+            toolbarTextView.setText("All Orders");
 
         } else if (id == R.id.nav_account) {
             accountOnClick();
@@ -269,6 +274,39 @@ public class HomeActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void allOrderOnClick() {
+        Bundle bundle = new Bundle();
+        bundle.putInt(BundleArg.FETCH_ORDERS_TYPE,BundleArg.ALL_ORDERS);
+        OrdersFragment ordersFragment=new OrdersFragment();
+        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.container_main,ordersFragment);
+        ordersFragment.setArguments(bundle);
+        transaction.commit();
+    }
+
+    private void homeOnClick() {
+        HomeFragment homeFragment= new HomeFragment();
+        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.container_main,homeFragment,"HOME").commit();
+    }
+
+    private void myOrderOnClick() {
+        if(loggedIn){
+            Bundle bundle = new Bundle();
+            bundle.putInt(BundleArg.FETCH_ORDERS_TYPE,BundleArg.MY_ORDERS);
+            OrdersFragment ordersFragment=new OrdersFragment();
+            android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            transaction.replace(R.id.container_main,ordersFragment);
+            ordersFragment.setArguments(bundle);
+            transaction.commit();
+        }else{
+            Toast.makeText(HomeActivity.this,"You need to be logged in to continue.",Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void createOrderOnClick() {

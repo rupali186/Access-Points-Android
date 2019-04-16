@@ -14,6 +14,19 @@ public class Order {
     String status;
     String del_mode;
     String payment_status;
+    boolean isExpanded;
+
+    public Order() {
+        isExpanded=false;
+    }
+
+    public boolean isExpanded() {
+        return isExpanded;
+    }
+
+    public void setExpanded(boolean expanded) {
+        isExpanded = expanded;
+    }
 
     public Order(Size size, int price, String del_date, int category_id, int product_id, int weight, String del_mode, String payment_status) {
         this.size = size;

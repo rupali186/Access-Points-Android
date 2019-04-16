@@ -16,13 +16,14 @@ import android.widget.LinearLayout;
 
 import com.multilingual.rupali.accesspoints.Activities.TargetCustomersActivity;
 import com.multilingual.rupali.accesspoints.Constants.BundleArg;
+import com.multilingual.rupali.accesspoints.Constants.LoginSharedPref;
 import com.multilingual.rupali.accesspoints.R;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class HomeFragment extends Fragment {
-    
+
     Button targetCustomerButton;
     Button sendMailButton;
     Button newCustButton;
@@ -66,13 +67,73 @@ public class HomeFragment extends Fragment {
             }
         });
         return view;
-        
+
     }
 
     private void newToLocOnClick() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Enter the limit of customers.");
+        LinearLayout layout = new LinearLayout(getContext());
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        final EditText limitET = new EditText(getContext());
+        limitET.setHint("Limit");
+        layout.addView(limitET);
+
+        builder.setView(layout);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                int limit=Integer.parseInt(limitET.getText().toString());
+                Bundle bundle=new Bundle();
+                bundle.putInt(BundleArg.LIMIT,limit);
+                bundle.putInt(BundleArg.TARGET_CUST_TYPE, BundleArg.NEW_TO_LOCKER);
+                Intent intent=new Intent(getContext(), TargetCustomersActivity.class);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
     }
 
     private void newCustomerOnclick() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Enter the limit of customers.");
+        LinearLayout layout = new LinearLayout(getContext());
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        final EditText limitET = new EditText(getContext());
+        limitET.setHint("Limit");
+        layout.addView(limitET);
+
+        builder.setView(layout);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                int limit=Integer.parseInt(limitET.getText().toString());
+                Bundle bundle=new Bundle();
+                bundle.putInt(BundleArg.LIMIT,limit);
+                bundle.putInt(BundleArg.TARGET_CUST_TYPE, BundleArg.NEW_CUSTOMERS);
+                Intent intent=new Intent(getContext(), TargetCustomersActivity.class);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
     }
 
     private void sendMailOnClick() {
@@ -101,6 +162,7 @@ public class HomeFragment extends Fragment {
                 Bundle bundle=new Bundle();
                 bundle.putInt(BundleArg.THRESHOLD,threshold);
                 bundle.putInt(BundleArg.LIMIT,limit);
+                bundle.putInt(BundleArg.TARGET_CUST_TYPE, BundleArg.TARGET_CUSTOMERS);
                 Intent intent=new Intent(getContext(), TargetCustomersActivity.class);
                 intent.putExtras(bundle);
                 startActivity(intent);

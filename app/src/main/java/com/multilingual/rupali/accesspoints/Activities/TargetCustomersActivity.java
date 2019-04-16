@@ -42,6 +42,7 @@ public class TargetCustomersActivity extends AppCompatActivity {
     TargetcustomerAdapter targetcustomerAdapter;
     Retrofit retrofit;
     int threshold,limit;
+    int targetCustType=BundleArg.TARGET_CUSTOMERS;
     Bundle bundle;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,19 +70,29 @@ public class TargetCustomersActivity extends AppCompatActivity {
         if(bundle!=null){
             fetchDataFromBundle();
         }
-        fetchTargetCustomers();
 
     }
 
     private void fetchDataFromBundle() {
-        threshold=bundle.getInt(BundleArg.THRESHOLD);
+        targetCustType=bundle.getInt(BundleArg.TARGET_CUST_TYPE);
         limit=bundle.getInt(BundleArg.LIMIT);
+        if(targetCustType==BundleArg.TARGET_CUSTOMERS) {
+            toolbarTextView.setText("Target Customers");
+            threshold = bundle.getInt(BundleArg.THRESHOLD);
+            fetchTargetCustomers();
+        }else if(targetCustType==BundleArg.NEW_TO_LOCKER){
+            toolbarTextView.setText("New Locker Customers");
+            fetchNewToLockers();
+        }else if(targetCustType==BundleArg.NEW_CUSTOMERS){
+            toolbarTextView.setText("New Customers");
+            fetchNewCustomers();
+        }
     }
 
-    private void fetchTargetCustomers() {
+    private void fetchNewCustomers() {
         showProgress();
         UserApi userApi=retrofit.create(UserApi.class);
-        Call<UserResponse> userResponse=userApi.getTargetUsers(limit,threshold);
+        Call<UserResponse> userResponse=userApi.getNewUsers(limit);
         userResponse.enqueue(new Callback<UserResponse>() {
             @Override
             public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
@@ -89,6 +100,7 @@ public class TargetCustomersActivity extends AppCompatActivity {
                     hideProgress();
                     UserResponse userResponse1=response.body();
                     ArrayList<User> users=userResponse1.users;
+                    userArrayList.clear();
                     userArrayList.addAll(users);
                     targetcustomerAdapter.notifyDataSetChanged();
                     Toast.makeText(TargetCustomersActivity.this,"Fetched sucessfully.", Toast.LENGTH_SHORT).show();
@@ -104,8 +116,73 @@ public class TargetCustomersActivity extends AppCompatActivity {
             public void onFailure(Call<UserResponse> call, Throwable t) {
                 hideProgress();
                 Toast.makeText(TargetCustomersActivity.this,"Target customers fetch failed. Check your network connection.", Toast.LENGTH_SHORT).show();
-                Log.d(Tag.MY_TAG, "sign in post submitted to API failed." +t.getMessage());
+                Log.d(Tag.MY_TAG, "target customers post submitted to API failed. Message: " +t.getMessage()+"Local msg: "+
+                        t.getLocalizedMessage()+"Ccause: "+t.getCause());
             }
+        });
+    }
+
+    private void fetchNewToLockers() {
+        showProgress();
+        UserApi userApi=retrofit.create(UserApi.class);
+        Call<UserResponse> userResponse=userApi.getNewLockerUsers(limit);
+        userResponse.enqueue(new Callback<UserResponse>() {
+            @Override
+            public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
+                if(response.isSuccessful()) {
+                    hideProgress();
+                    UserResponse userResponse1=response.body();
+                    ArrayList<User> users=userResponse1.users;
+                    userArrayList.clear();
+                    userArrayList.addAll(users);
+                    targetcustomerAdapter.notifyDataSetChanged();
+                    Toast.makeText(TargetCustomersActivity.this,"Fetched sucessfully.", Toast.LENGTH_SHORT).show();
+                    Log.d(Tag.MY_TAG,"Target Customers success: Body: "+response.body()+"");
+                }else{
+                    hideProgress();
+                    Toast.makeText(TargetCustomersActivity.this,"Please check your network connection.", Toast.LENGTH_SHORT).show();
+                    Log.d(Tag.MY_TAG, "target customers fetch failed. Code: "+response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserResponse> call, Throwable t) {
+                hideProgress();
+                Toast.makeText(TargetCustomersActivity.this,"Target customers fetch failed. Check your network connection.", Toast.LENGTH_SHORT).show();
+                Log.d(Tag.MY_TAG, "target customers post submitted to API failed. Message: " +t.getMessage()+"Local msg: "+
+                        t.getLocalizedMessage()+"Ccause: "+t.getCause());            }
+        });
+    }
+
+    private void fetchTargetCustomers() {
+        showProgress();
+        UserApi userApi=retrofit.create(UserApi.class);
+        Call<UserResponse> userResponse=userApi.getTargetUsers(limit,threshold);
+        userResponse.enqueue(new Callback<UserResponse>() {
+            @Override
+            public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
+                if(response.isSuccessful()) {
+                    hideProgress();
+                    UserResponse userResponse1=response.body();
+                    ArrayList<User> users=userResponse1.users;
+                    userArrayList.clear();
+                    userArrayList.addAll(users);
+                    targetcustomerAdapter.notifyDataSetChanged();
+                    Toast.makeText(TargetCustomersActivity.this,"Fetched sucessfully.", Toast.LENGTH_SHORT).show();
+                    Log.d(Tag.MY_TAG,"Target Customers success: Body: "+response.body()+"");
+                }else{
+                    hideProgress();
+                    Toast.makeText(TargetCustomersActivity.this,"Please check your network connection.", Toast.LENGTH_SHORT).show();
+                    Log.d(Tag.MY_TAG, "target customers fetch failed. Code: "+response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserResponse> call, Throwable t) {
+                hideProgress();
+                Toast.makeText(TargetCustomersActivity.this,"Target customers fetch failed. Check your network connection.", Toast.LENGTH_SHORT).show();
+                Log.d(Tag.MY_TAG, "target customers post submitted to API failed. Message: " +t.getMessage()+"Local msg: "+
+                        t.getLocalizedMessage()+"Ccause: "+t.getCause());            }
         });
 
     }

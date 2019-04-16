@@ -15,6 +15,8 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 
 public interface OrderApi {
+    @GET("orders/me")
+    Call<OrderResponse> getMyOrders(@Header("x-auth") String xAuth);
     @GET("orders")
     Call<OrderResponse> getOrders();
     @GET("orders/{orderId}")
