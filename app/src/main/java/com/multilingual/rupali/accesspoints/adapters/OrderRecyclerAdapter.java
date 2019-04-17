@@ -20,12 +20,14 @@ import java.util.ArrayList;
 public class OrderRecyclerAdapter extends RecyclerView.Adapter<OrderRecyclerAdapter.ViewHolder> {
     Context context;
     ArrayList<Order> orders;
-    OrderRecyclerAdapter.OnItemClickListener listener;
+    OnItemClickListener listener;
+    OnItemLongClickListener onItemLongClickListener;
 
-    public OrderRecyclerAdapter(Context context, ArrayList<Order> orders, OrderRecyclerAdapter.OnItemClickListener listener) {
+    public OrderRecyclerAdapter(Context context, ArrayList<Order> orders, OrderRecyclerAdapter.OnItemClickListener listener,OnItemLongClickListener onItemLongClickListener) {
         this.context = context;
         this.orders = orders;
         this.listener = listener;
+        this.onItemLongClickListener=onItemLongClickListener;
     }
 
     @NonNull
@@ -69,6 +71,13 @@ public class OrderRecyclerAdapter extends RecyclerView.Adapter<OrderRecyclerAdap
                 listener.onItemCilck(position);
             }
         });
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                onItemLongClickListener.onItemLongCilck(position);
+                return false;
+            }
+        });
 
     }
 
@@ -79,6 +88,9 @@ public class OrderRecyclerAdapter extends RecyclerView.Adapter<OrderRecyclerAdap
 
     public interface OnItemClickListener{
         void onItemCilck(int position);
+    }
+    public interface OnItemLongClickListener{
+        void onItemLongCilck(int position);
     }
 
     class ViewHolder extends RecyclerView.ViewHolder{

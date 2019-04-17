@@ -1,5 +1,6 @@
 package com.multilingual.rupali.accesspoints.api;
 
+import com.multilingual.rupali.accesspoints.models.EditOrder;
 import com.multilingual.rupali.accesspoints.models.Order;
 import com.multilingual.rupali.accesspoints.response.OrderResponse;
 
@@ -25,7 +26,7 @@ public interface OrderApi {
     @POST("orders")
     Call<Order> createNewOrder(@Header("x-auth") String xAuth,@Body Order order);
     @PATCH("orders/{orderId}")
-    Call<Order> updateOrder(@Path("orderId") String orderId);
+    Call<Order> updateOrder(@Path("orderId") String orderId,@Header("x-auth") String xAuth,@Body EditOrder editOrder);
     @DELETE ("orders/{orderId}")
     Call<Order> deleteOrder(@Path("orderId") String orderId,@Header("x-auth") String xAuth);
 }

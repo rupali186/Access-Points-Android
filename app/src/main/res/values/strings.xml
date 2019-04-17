@@ -27,6 +27,11 @@
         <item>Gift Cards</item>
         <item>Art, Handicraft, Collectibles</item>
     </string-array>
+    <string-array name="orderStatus">
+        <item>delivered</item>
+        <item>cancelled</item>
+        <item>failed</item>
+    </string-array>
     <string-array name="productIds">
         <item>1</item>
         <item>2</item>
@@ -63,5 +68,6 @@
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_target_customers">TargetCustomersActivity</string>
+    <string name="title_activity_order_edit">OrderEditActivity</string>
 
 </resources>

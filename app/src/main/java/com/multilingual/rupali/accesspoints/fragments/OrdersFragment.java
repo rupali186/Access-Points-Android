@@ -2,6 +2,7 @@ package com.multilingual.rupali.accesspoints.fragments;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
@@ -16,6 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.multilingual.rupali.accesspoints.Activities.OrderEditActivity;
 import com.multilingual.rupali.accesspoints.Activities.TargetCustomersActivity;
 import com.multilingual.rupali.accesspoints.Constants.BundleArg;
 import com.multilingual.rupali.accesspoints.Constants.LoginSharedPref;
@@ -85,6 +87,11 @@ public class OrdersFragment extends Fragment {
             public void onItemCilck(int position) {
 
             }
+        }, new OrderRecyclerAdapter.OnItemLongClickListener() {
+            @Override
+            public void onItemLongCilck(int position) {
+                onOrderLongClick(position);
+            }
         });
         orderRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false));
         orderRecyclerView.setAdapter(orderRecyclerAdapter);
@@ -98,6 +105,24 @@ public class OrdersFragment extends Fragment {
             fetchAllOrders();
         }
         return  view;
+    }
+
+    private void onOrderLongClick(int position) {
+        if(fetchOrdersType==BundleArg.ALL_ORDERS){
+            Toast.makeText(getContext(),"You can only edit your orders. Edit orders in my orders section.",Toast.LENGTH_SHORT).show();
+            return;
+        }
+        String orderId=orderArrayList.get(position).get_id();
+        if(orderId.isEmpty()){
+            Toast.makeText(getContext(),"Order id is required to edit the order.",Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Intent intent=new Intent(getContext(), OrderEditActivity.class);
+        Bundle bundle=new Bundle();
+        bundle.putString(BundleArg.ORDER_ID,orderId);
+        intent.putExtras(bundle);
+        startActivity(intent);
+
     }
 
     private void fetchAllOrders() {
