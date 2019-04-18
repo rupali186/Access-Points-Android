@@ -34,9 +34,13 @@ import com.multilingual.rupali.accesspoints.api.UserApi;
 import com.multilingual.rupali.accesspoints.config.APIClient;
 import com.multilingual.rupali.accesspoints.fragments.AccountDetailsFragment;
 import com.multilingual.rupali.accesspoints.fragments.CreateOrderFragment;
+import com.multilingual.rupali.accesspoints.fragments.EditAccountDetailsFragment;
 import com.multilingual.rupali.accesspoints.fragments.HomeFragment;
 import com.multilingual.rupali.accesspoints.fragments.OrdersFragment;
+import com.multilingual.rupali.accesspoints.models.Address;
 import com.multilingual.rupali.accesspoints.models.User;
+
+import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
@@ -45,7 +49,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 public class HomeActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, CreateOrderFragment.ProgressListener, OrdersFragment.ProgressListener {
+        implements NavigationView.OnNavigationItemSelectedListener, CreateOrderFragment.ProgressListener,EditAccountDetailsFragment.ProgressListener, OrdersFragment.ProgressListener {
     TextView nameTextView;
     TextView logInOrSignUp;
     CircleImageView loginImageView;
@@ -230,11 +234,103 @@ public class HomeActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_edit_account) {
+            editAccountOnClick();
+            return true;
+        }else if(id==R.id.action_delete_account){
+            deleteAccountOnClick();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem editAccount = menu.findItem(R.id.action_edit_account);
+        MenuItem deleteAccount=menu.findItem(R.id.action_delete_account);
+
+        if(loggedIn){
+            editAccount.setVisible(true);
+            deleteAccount.setVisible(true);
+        }else{
+            editAccount.setVisible(false);
+            deleteAccount.setVisible(false);
+        }
+        return true;
+    }
+
+    private void editAccountOnClick() {
+        if(loggedIn){
+            EditAccountDetailsFragment editAccountDetailsFragment=new EditAccountDetailsFragment();
+            android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            transaction.replace(R.id.container_main,editAccountDetailsFragment);
+            transaction.commit();
+            toolbarTextView.setText("Edit Account Details");
+            exit=false;
+        }else{
+            Toast.makeText(HomeActivity.this,"You need to be logged in to continue.",Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void deleteAccountOnClick() {
+        if(loggedIn){
+            AlertDialog.Builder builder=new AlertDialog.Builder(this);
+
+            builder.setMessage("Are you sure you want to Delete your account?");
+            builder.setTitle("Confirm Deletion!");
+            builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.dismiss();
+                }
+            });
+            builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    deleteAccount();
+                    dialogInterface.dismiss();
+                }
+            });
+            builder.show();
+
+        }else{
+            Toast.makeText(HomeActivity.this,"You need to be logged in to continue.",Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void deleteAccount() {
+        showProgress();
+        String xAuth=sharedPreferences.getString(LoginSharedPref.USER_TOKEN,"");
+        UserApi userApi=retrofit.create(UserApi.class);
+        Call<User> userResponse=userApi.deleteCurrentUser(xAuth);
+        userResponse.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if(response.isSuccessful()) {
+                    SharedPreferences.Editor editor=sharedPreferences.edit();
+                    editor.clear();
+                    editor.commit();
+                    populateDataFromSharedPreferences();
+                    Toast.makeText(HomeActivity.this,"User Deleted Successfully.", Toast.LENGTH_SHORT).show();
+                    Log.d(Tag.MY_TAG,"User delete Success: Body: "+response.body()+" code: "+response.code());
+                    hideProgress();
+                }else{
+                    hideProgress();
+                    Toast.makeText(HomeActivity.this,"Please check your network connection.", Toast.LENGTH_SHORT).show();
+                    Log.d(Tag.MY_TAG, "delete post submitted to API failed."+response.body()+" code: "+response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                hideProgress();
+                Toast.makeText(HomeActivity.this,"Please check your network connection.", Toast.LENGTH_SHORT).show();
+                Log.d(Tag.MY_TAG, "delete post submitted to API failed." +t.getMessage());
+            }
+
+        });
     }
 
     @SuppressWarnings("StatementWithEmptyBody")

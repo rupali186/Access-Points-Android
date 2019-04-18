@@ -97,14 +97,19 @@ public class OrdersFragment extends Fragment {
         orderRecyclerView.setAdapter(orderRecyclerAdapter);
         sharedPreferences=getActivity().getSharedPreferences(LoginSharedPref.SHARED_PREF_NAME,MODE_PRIVATE);
         retrofit= APIClient.getClient();
+        return  view;
+    }
+
+    @Override
+    public void onStart() {
         Bundle bundle = this.getArguments();
         fetchOrdersType=bundle.getInt(BundleArg.FETCH_ORDERS_TYPE);
-        if(fetchOrdersType==BundleArg.MY_ORDERS){
-            fetchMyOrders();
-        }else if(fetchOrdersType==BundleArg.ALL_ORDERS){
+        if(fetchOrdersType==BundleArg.ALL_ORDERS){
             fetchAllOrders();
+        }else{
+            fetchMyOrders();
         }
-        return  view;
+        super.onStart();
     }
 
     private void onOrderLongClick(int position) {

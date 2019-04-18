@@ -37,6 +37,16 @@ public class User {
         this.address = address;
         this.isExpanded=false;
     }
+    public User(String email,String u_name, ArrayList<String> phone_no, String dob, String gender, ArrayList<Address> address) {
+        this.email = email;
+        this.password = password;
+        this.u_name = u_name;
+        this.phone_no = phone_no;
+        this.dob = dob;
+        this.gender = gender;
+        this.address = address;
+        this.isExpanded=false;
+    }
 
     public String get_id() {
         return _id;

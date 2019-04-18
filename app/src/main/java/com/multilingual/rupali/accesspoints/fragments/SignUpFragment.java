@@ -95,7 +95,7 @@ public class SignUpFragment extends Fragment {
         confirmPassET=view.findViewById(R.id.user_re_type_pass);
         unameET=view.findViewById(R.id.user_name);
         dobtView=view.findViewById(R.id.user_dob);
-        dobIView=view.findViewById(R.id.del_date_dropdown);
+        dobIView=view.findViewById(R.id.dob_dropdown);
         contactET=view.findViewById(R.id.user_phone);
         genderRgrp=view.findViewById(R.id.user_gender_radiogroup);
         countryET=view.findViewById(R.id.user_country);
@@ -262,7 +262,7 @@ public class SignUpFragment extends Fragment {
         pin=pinET.getText().toString();
         confirmPass=confirmPassET.getText().toString();
         if(email.isEmpty()||password.isEmpty()||uname.isEmpty()||contactNo.isEmpty()||gender.isEmpty()
-        ||country.isEmpty()||state.isEmpty()||city.isEmpty()||landmark.isEmpty()||street.isEmpty()
+        ||country.isEmpty()||state.isEmpty()||city.isEmpty()||landmark.isEmpty()||street.isEmpty()||userPhoneCode.isEmpty()
         ||hno.isEmpty()||pin.isEmpty()||confirmPass.isEmpty()){
             return  false;
         }

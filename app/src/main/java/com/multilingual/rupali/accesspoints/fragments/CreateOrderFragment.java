@@ -95,7 +95,7 @@ public class CreateOrderFragment extends Fragment {
         priceET=view.findViewById(R.id.order_price);
         weightET=view.findViewById(R.id.order_weight);
         delDateTV=view.findViewById(R.id.order_del_date);
-        delDateIV=view.findViewById(R.id.del_date_dropdown);
+        delDateIV=view.findViewById(R.id.dob_dropdown);
         createOrderButton=view.findViewById(R.id.create_order_button);
         categorySpinner = (Spinner) view.findViewById(R.id.category_spinner);
         productIdSpinner=view.findViewById(R.id.productid_spinner);

@@ -214,7 +214,7 @@ tools:context=".fragments.CreateOrderFragment">
         app:layout_constraintTop_toBottomOf="@+id/textView14" />
 
     <ImageView
-        android:id="@+id/del_date_dropdown"
+        android:id="@+id/dob_dropdown"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginStart="8dp"
@@ -235,7 +235,7 @@ tools:context=".fragments.CreateOrderFragment">
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/del_date_dropdown" />
+        app:layout_constraintTop_toBottomOf="@+id/dob_dropdown" />
 
     <Spinner
         android:id="@+id/delivery_mode_spinner"

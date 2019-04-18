@@ -1,5 +1,6 @@
 package com.multilingual.rupali.accesspoints.api;
 
+import com.multilingual.rupali.accesspoints.models.EditUser;
 import com.multilingual.rupali.accesspoints.models.SignInUser;
 import com.multilingual.rupali.accesspoints.models.User;
 import com.multilingual.rupali.accesspoints.response.UserResponse;
@@ -36,5 +37,5 @@ public interface UserApi {
     @DELETE("users/me")
     Call<User> deleteCurrentUser(@Header("x-auth") String xAuth);
     @PATCH("users/{userId}")
-    Call<User> updateUser(@Path("userId") String userId,@Header("x-auth") String xAuth);
+    Call<EditUser> updateUser(@Path("userId") String userId, @Header("x-auth") String xAuth, @Body User user);
 }
