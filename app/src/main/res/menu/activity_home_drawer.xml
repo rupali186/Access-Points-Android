@@ -38,10 +38,6 @@
         android:icon="@drawable/ic_message_black_24dp"
         android:title="Contact Us" />
     <item
-        android:id="@+id/nav_feedback"
-        android:icon="@drawable/ic_feedback_icon"
-        android:title="Feedback" />
-    <item
         android:id="@+id/nav_share"
         android:icon="@drawable/ic_menu_share"
         android:title="Share" />

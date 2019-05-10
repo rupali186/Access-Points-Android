@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.multilingual.rupali.accesspoints.Constants.LoginSharedPref;
+import com.multilingual.rupali.accesspoints.Constants.StringConstants;
 import com.multilingual.rupali.accesspoints.Constants.Tag;
 import com.multilingual.rupali.accesspoints.R;
 import com.multilingual.rupali.accesspoints.api.OrderApi;
@@ -206,10 +207,10 @@ public class CreateOrderFragment extends Fragment {
                     Order order=response.body();
                     Toast.makeText(getContext(),"Order Created Successfully. ", Toast.LENGTH_SHORT).show();
                     Log.d(Tag.MY_TAG,"Order creted Success: Body: "+response.body()+" id: "+order.get_id());
+                    mCallback.hideProgress();
                     getActivity().onBackPressed();
                 }else{
                     mCallback.hideProgress();
-
                     Toast.makeText(getContext(),"Please check your network connection.", Toast.LENGTH_SHORT).show();
                     Log.d(Tag.MY_TAG, "order post submitted to API failed."+response.code()+" Headers:"+
                             response.headers()+"Message: "+response.message()+"x Auth: "+xAuth+"Call :"+call.toString()+response.toString());
@@ -260,7 +261,12 @@ public class CreateOrderFragment extends Fragment {
                     "!!",Toast.LENGTH_SHORT).show();
             return  false;
         }
-//        Boolean delDateFalse=false;
+        if(paymentStatus.equals(StringConstants.PaymentStatus.UNPAID)&&(delMode.equals(StringConstants.DeliveryMode.STORE_DEL)||
+                delMode.equals(StringConstants.DeliveryMode.ACCESS_PTS))){
+            Toast.makeText(getContext(),"Payment status should be paid for store delivery and access points." +
+                    "!!",Toast.LENGTH_SHORT).show();
+            return  false;
+        }
         Date date = Calendar.getInstance().getTime();
         SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
         oDate = df.format(date);

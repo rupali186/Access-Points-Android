@@ -146,6 +146,7 @@ public class OrdersFragment extends Fragment {
                     orderRecyclerAdapter.notifyDataSetChanged();
                     Toast.makeText(getContext(),"Fetched sucessfully.", Toast.LENGTH_SHORT).show();
                     Log.d(Tag.MY_TAG,"All Orders success: Body: "+response.body()+"");
+                    mCallback.hideProgress();
                 }else{
                     mCallback.hideProgress();
                     Toast.makeText(getContext(),"Please check your network connection.", Toast.LENGTH_SHORT).show();

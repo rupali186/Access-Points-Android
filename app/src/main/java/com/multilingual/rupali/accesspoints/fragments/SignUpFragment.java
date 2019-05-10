@@ -130,7 +130,6 @@ public class SignUpFragment extends Fragment {
         mMonth = c.get(Calendar.MONTH);
         mDay = c.get(Calendar.DAY_OF_MONTH);
 
-
         DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
                 new DatePickerDialog.OnDateSetListener() {
 
@@ -142,6 +141,9 @@ public class SignUpFragment extends Fragment {
 
                     }
                 }, mYear, mMonth, mDay);
+
+        datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
+
         datePickerDialog.show();
     }
 
@@ -178,6 +180,8 @@ public class SignUpFragment extends Fragment {
                 }else{
                     mCallback.hideProgress();
                     Toast.makeText(getContext(),"Please check your network connection or the User Already Exists", Toast.LENGTH_SHORT).show();
+                    Log.d(Tag.MY_TAG, "sign up post submitted to API failed."+response.code()+" Headers:"+
+                            response.headers()+"Message: "+response.message()+"Call :"+call.toString()+response.toString());
                     Log.d(Tag.MY_TAG, "post submitted to API failed.");
                 }
             }

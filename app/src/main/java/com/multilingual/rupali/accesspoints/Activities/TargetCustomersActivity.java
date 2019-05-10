@@ -10,6 +10,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -19,8 +21,10 @@ import com.multilingual.rupali.accesspoints.Constants.BundleArg;
 import com.multilingual.rupali.accesspoints.Constants.Tag;
 import com.multilingual.rupali.accesspoints.R;
 import com.multilingual.rupali.accesspoints.adapters.TargetcustomerAdapter;
+import com.multilingual.rupali.accesspoints.api.CouponApi;
 import com.multilingual.rupali.accesspoints.api.UserApi;
 import com.multilingual.rupali.accesspoints.config.APIClient;
+import com.multilingual.rupali.accesspoints.models.Coupon;
 import com.multilingual.rupali.accesspoints.models.SignInUser;
 import com.multilingual.rupali.accesspoints.models.User;
 import com.multilingual.rupali.accesspoints.response.UserResponse;
@@ -89,6 +93,32 @@ public class TargetCustomersActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_target_customers, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_send_mail) {
+            sendMail();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void sendMail() {
+
+    }
+
     private void fetchNewCustomers() {
         showProgress();
         UserApi userApi=retrofit.create(UserApi.class);
@@ -96,8 +126,8 @@ public class TargetCustomersActivity extends AppCompatActivity {
         userResponse.enqueue(new Callback<UserResponse>() {
             @Override
             public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
+                hideProgress();
                 if(response.isSuccessful()) {
-                    hideProgress();
                     UserResponse userResponse1=response.body();
                     ArrayList<User> users=userResponse1.users;
                     userArrayList.clear();
@@ -106,7 +136,6 @@ public class TargetCustomersActivity extends AppCompatActivity {
                     Toast.makeText(TargetCustomersActivity.this,"Fetched sucessfully.", Toast.LENGTH_SHORT).show();
                     Log.d(Tag.MY_TAG,"Target Customers success: Body: "+response.body()+"");
                 }else{
-                    hideProgress();
                     Toast.makeText(TargetCustomersActivity.this,"Please check your network connection.", Toast.LENGTH_SHORT).show();
                     Log.d(Tag.MY_TAG, "target customers fetch failed. Code: "+response.code());
                 }

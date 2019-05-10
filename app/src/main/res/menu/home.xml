@@ -13,4 +13,11 @@
         android:title="Delete Account"
         android:visible="true"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_send_email"
+        android:orderInCategory="100"
+        android:title="Send Email"
+        android:visible="true"
+        app:showAsAction="never" />
+
 </menu>

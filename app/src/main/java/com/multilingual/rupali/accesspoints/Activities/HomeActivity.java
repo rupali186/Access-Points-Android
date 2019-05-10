@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
@@ -360,13 +361,26 @@ public class HomeActivity extends AppCompatActivity
         } else if (id == R.id.nav_about_us) {
 
         } else if (id == R.id.nav_share) {
+            try {
+                Intent i = new Intent(Intent.ACTION_SEND);
+                i.setType("text/plain");
+                i.putExtra(Intent.EXTRA_SUBJECT, "Access Points");
+                String sAux = "\nAccess points\n";
+                sAux = sAux + "https://play.google.com/store/apps/details?1234=the.AccessPoints.1234 \n\n";
+                i.putExtra(Intent.EXTRA_TEXT, sAux);
+                startActivity(Intent.createChooser(i, "choose one"));
+            } catch(Exception e) {
+                //e.toString();
+            }
 
         } else if (id == R.id.nav_contact) {
+            Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                    "mailto","rupalichawla186@gmail.com", null));
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Contact: Access Points");
+            startActivity(Intent.createChooser(emailIntent, "Send email..."));
 
-        }else if (id == R.id.nav_feedback) {
 
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;

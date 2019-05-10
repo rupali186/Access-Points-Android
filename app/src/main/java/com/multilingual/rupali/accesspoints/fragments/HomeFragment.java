@@ -7,17 +7,21 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.multilingual.rupali.accesspoints.Activities.TargetCustomersActivity;
 import com.multilingual.rupali.accesspoints.Constants.BundleArg;
 import com.multilingual.rupali.accesspoints.Constants.LoginSharedPref;
 import com.multilingual.rupali.accesspoints.R;
+
+import static com.multilingual.rupali.accesspoints.Constants.Tag.MY_TAG;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -25,7 +29,6 @@ import com.multilingual.rupali.accesspoints.R;
 public class HomeFragment extends Fragment {
 
     Button targetCustomerButton;
-    Button sendMailButton;
     Button newCustButton;
     Button newToLocButton;
     public HomeFragment() {
@@ -39,19 +42,12 @@ public class HomeFragment extends Fragment {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_home, container, false);
         targetCustomerButton=view.findViewById(R.id.target_customer);
-        sendMailButton=view.findViewById(R.id.send_mail);
         newCustButton=view.findViewById(R.id.new_cust_button);
         newToLocButton=view.findViewById(R.id.new_to_loc_button);
         targetCustomerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 targetcustomerOnClick();
-            }
-        });
-        sendMailButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                sendMailOnClick();
             }
         });
         newCustButton.setOnClickListener(new View.OnClickListener() {
@@ -84,13 +80,21 @@ public class HomeFragment extends Fragment {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                int limit=Integer.parseInt(limitET.getText().toString());
-                Bundle bundle=new Bundle();
-                bundle.putInt(BundleArg.LIMIT,limit);
-                bundle.putInt(BundleArg.TARGET_CUST_TYPE, BundleArg.NEW_TO_LOCKER);
-                Intent intent=new Intent(getContext(), TargetCustomersActivity.class);
-                intent.putExtras(bundle);
-                startActivity(intent);
+                try {
+                    String limitString=limitET.getText().toString();
+                    int limit=Integer.parseInt(limitString);
+                    Bundle bundle=new Bundle();
+                    bundle.putInt(BundleArg.LIMIT,limit);
+                    bundle.putInt(BundleArg.TARGET_CUST_TYPE, BundleArg.NEW_TO_LOCKER);
+                    Intent intent=new Intent(getContext(), TargetCustomersActivity.class);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                } catch (NumberFormatException e) {
+                    Log.w(MY_TAG, "entered value isn't Integer");
+                    Toast.makeText(getContext(),"Please enter a valid integer with no spaces",Toast.LENGTH_SHORT).show();
+                }
+
+               // int limit=Integer.parseInt(limitET.getText().toString());
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -117,13 +121,19 @@ public class HomeFragment extends Fragment {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                int limit=Integer.parseInt(limitET.getText().toString());
-                Bundle bundle=new Bundle();
-                bundle.putInt(BundleArg.LIMIT,limit);
-                bundle.putInt(BundleArg.TARGET_CUST_TYPE, BundleArg.NEW_CUSTOMERS);
-                Intent intent=new Intent(getContext(), TargetCustomersActivity.class);
-                intent.putExtras(bundle);
-                startActivity(intent);
+                try {
+                    int limit=Integer.parseInt(limitET.getText().toString());
+                    Bundle bundle=new Bundle();
+                    bundle.putInt(BundleArg.LIMIT,limit);
+                    bundle.putInt(BundleArg.TARGET_CUST_TYPE, BundleArg.NEW_CUSTOMERS);
+                    Intent intent=new Intent(getContext(), TargetCustomersActivity.class);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                } catch (NumberFormatException e) {
+                    Log.w(MY_TAG, "entered value isn't Integer");
+                    Toast.makeText(getContext(),"Please enter a valid integer with no spaces",Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -134,9 +144,6 @@ public class HomeFragment extends Fragment {
         });
 
         builder.show();
-    }
-
-    private void sendMailOnClick() {
     }
 
     private void targetcustomerOnClick() {
@@ -157,15 +164,21 @@ public class HomeFragment extends Fragment {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                int threshold = Integer.parseInt(thresholdET.getText().toString());
-                int limit=Integer.parseInt(limitET.getText().toString());
-                Bundle bundle=new Bundle();
-                bundle.putInt(BundleArg.THRESHOLD,threshold);
-                bundle.putInt(BundleArg.LIMIT,limit);
-                bundle.putInt(BundleArg.TARGET_CUST_TYPE, BundleArg.TARGET_CUSTOMERS);
-                Intent intent=new Intent(getContext(), TargetCustomersActivity.class);
-                intent.putExtras(bundle);
-                startActivity(intent);
+                try {
+                    int threshold = Integer.parseInt(thresholdET.getText().toString());
+                    int limit=Integer.parseInt(limitET.getText().toString());
+                    Bundle bundle=new Bundle();
+                    bundle.putInt(BundleArg.THRESHOLD,threshold);
+                    bundle.putInt(BundleArg.LIMIT,limit);
+                    bundle.putInt(BundleArg.TARGET_CUST_TYPE, BundleArg.TARGET_CUSTOMERS);
+                    Intent intent=new Intent(getContext(), TargetCustomersActivity.class);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                } catch (NumberFormatException e) {
+                    Log.w(MY_TAG, "entered value isn't Integer");
+                    Toast.makeText(getContext(),"Please enter a valid integer with no spaces",Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

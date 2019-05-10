@@ -122,6 +122,7 @@ public class SignInFragment extends Fragment {
                     saveUserInSharedPref( user);
                     Toast.makeText(getContext(),"Logged In Successfully.", Toast.LENGTH_SHORT).show();
                     Log.d(Tag.MY_TAG,"Logged in success: Body: "+response.body()+"");
+                    //mCallback.hideProgress();
                     getActivity().onBackPressed();
                 }else{
                     mCallback.hideProgress();
