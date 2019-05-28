@@ -141,6 +141,7 @@ public class OrdersFragment extends Fragment {
                     mCallback.hideProgress();
                     OrderResponse orderResponse=response.body();
                     ArrayList<Order> orders=orderResponse.orders;
+                    Log.d(Tag.MY_TAG,orders+"");
                     orderArrayList.clear();
                     orderArrayList.addAll(orders);
                     orderRecyclerAdapter.notifyDataSetChanged();

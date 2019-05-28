@@ -1,5 +1,7 @@
 package com.multilingual.rupali.accesspoints.models;
 
+import java.util.ArrayList;
+
 public class Order {
     String user_id;
     String _id;
@@ -15,6 +17,8 @@ public class Order {
     String del_mode;
     String payment_status;
     boolean isExpanded;
+   Address address;
+    AcessPointDetail access_pt_address;
 
     public Order() {
         isExpanded=false;
@@ -28,7 +32,7 @@ public class Order {
         isExpanded = expanded;
     }
 
-    public Order(Size size, int price, String del_date, int category_id, int product_id, int weight, String del_mode, String payment_status) {
+    public Order(Size size, int price,  int category_id, int product_id, String payment_status, String del_date, String del_mode, int weight, Address address) {
         this.size = size;
         this.price = price;
         this.del_date = del_date;
@@ -37,7 +41,22 @@ public class Order {
         this.weight = weight;
         this.del_mode = del_mode;
         this.payment_status = payment_status;
+        this.address = address;
     }
+
+    public Order(Size size, int price,  int category_id, int product_id, String payment_status, String del_date, String del_mode, int weight,Address address, AcessPointDetail access_pt_address) {
+        this.size = size;
+        this.price = price;
+        this.del_date = del_date;
+        this.category_id = category_id;
+        this.product_id = product_id;
+        this.weight = weight;
+        this.del_mode = del_mode;
+        this.payment_status = payment_status;
+        this.address = address;
+        this.access_pt_address = access_pt_address;
+    }
+
 
     public String get_id() {
         return _id;
@@ -141,6 +160,22 @@ public class Order {
 
     public void setPayment_status(String payment_status) {
         this.payment_status = payment_status;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    public AcessPointDetail getAccess_pt_address() {
+        return access_pt_address;
+    }
+
+    public void setAccess_pt_address(AcessPointDetail access_pt_address) {
+        this.access_pt_address = access_pt_address;
     }
 }
 

@@ -43,6 +43,14 @@ public class OrderRecyclerAdapter extends RecyclerView.Adapter<OrderRecyclerAdap
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         final Order order =orders.get(position);
         holder.orderId.setText(order.get_id());
+        String address;
+        if(order.getAccess_pt_address()==null){
+            address = order.getAddress().getH_no()+" "+ order.getAddress().getStreet() +" "+ order.getAddress().getCity() + " "+ order.getAddress().getState();
+
+        }
+        else{
+            address = order.getAccess_pt_address().getAddress();
+        }
         holder.content.setText("Order Date: "+ order.getO_date()+"\n"
                 +"Delivery Date: "+order.getDel_date()+"\n"
                 +"Status: "+order.getStatus()+"\n"
@@ -54,6 +62,7 @@ public class OrderRecyclerAdapter extends RecyclerView.Adapter<OrderRecyclerAdap
                 +"Category Id: "+order.getCategory_id()+"\n"
                 +"Product Id: "+order.getProduct_id()+"\n"
                 +"User Id: "+order.getUser_id()+"\n"
+                + "Address: " + address+"\n"
         );
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

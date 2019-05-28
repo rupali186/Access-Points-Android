@@ -11,5 +11,6 @@ public class BundleArg {
     public  static final String FETCH_ORDERS_TYPE="targetCustomerType";
     public  static final int MY_ORDERS=4;
     public  static final int ALL_ORDERS=5;
+    public static final int ACCESS_POINTS=4;
 
 }

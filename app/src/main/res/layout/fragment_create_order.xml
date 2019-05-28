@@ -12,6 +12,7 @@ tools:context=".fragments.CreateOrderFragment">
     android:layout_height="match_parent"
     android:padding="20dp">
 
+
     <TextView
         android:id="@+id/textview1"
         android:layout_width="0dp"
@@ -260,8 +261,9 @@ tools:context=".fragments.CreateOrderFragment">
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/delivery_mode_spinner" />
+        app:layout_constraintTop_toBottomOf="@+id/access_point_recycler_view" />
 
     <Spinner
         android:id="@+id/payment_status_spinner"
@@ -274,6 +276,19 @@ tools:context=".fragments.CreateOrderFragment">
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView17" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/access_point_recycler_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@color/gray"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/delivery_mode_spinner" />
 
     <Button
         android:id="@+id/create_order_button"
