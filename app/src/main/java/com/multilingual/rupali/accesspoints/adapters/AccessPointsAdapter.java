@@ -2,11 +2,13 @@ package com.multilingual.rupali.accesspoints.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v4.widget.ImageViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.multilingual.rupali.accesspoints.Constants.Tag;
@@ -22,12 +24,14 @@ public class AccessPointsAdapter extends RecyclerView.Adapter<AccessPointsAdapte
     ArrayList<AcessPointDetail> accessPoints;
     AccessPointsAdapter.OnItemClickListener listener;
     AccessPointsAdapter.OnItemLongClickListener onItemLongClickListener;
+    int clickedPos;
 
     public AccessPointsAdapter(Context context, ArrayList<AcessPointDetail> accessPoints, AccessPointsAdapter.OnItemClickListener listener, AccessPointsAdapter.OnItemLongClickListener onItemLongClickListener) {
         this.context = context;
         this.accessPoints = accessPoints;
         this.listener = listener;
         this.onItemLongClickListener=onItemLongClickListener;
+        clickedPos=-1;
     }
 
     @NonNull
@@ -56,10 +60,17 @@ public class AccessPointsAdapter extends RecyclerView.Adapter<AccessPointsAdapte
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
+                clickedPos=position;
                 onItemLongClickListener.onItemLongClick(position);
+                notifyDataSetChanged();
                 return false;
             }
         });
+        if(clickedPos==position){
+            holder.checkImage.setVisibility(View.VISIBLE);
+        } else {
+            holder.checkImage.setVisibility(View.INVISIBLE);
+        }
 
     }
 
@@ -80,12 +91,14 @@ public class AccessPointsAdapter extends RecyclerView.Adapter<AccessPointsAdapte
 //        TextView city;
 //        TextView state;
 //        TextView country;
+        ImageView checkImage;
         View itemView;
 
         public ViewHolder(View itemView) {
             super(itemView);
             this.itemView=itemView;
             address=itemView.findViewById(R.id.street_id_tv);
+            checkImage=itemView.findViewById(R.id.check_image);
 //            city=itemView.findViewById(R.id.city_id_tv);
 //            state=itemView.findViewById(R.id.state_id_tv);
 //            country=itemView.findViewById(R.id.country_id_tv);

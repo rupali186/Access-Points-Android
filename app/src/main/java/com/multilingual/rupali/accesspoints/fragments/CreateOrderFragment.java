@@ -187,28 +187,7 @@ public class CreateOrderFragment extends Fragment {
 
         address=new Address(hno,street,state,city,country,uname,landmark,pinn,contactNo);
 
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-
-        adapter=new AccessPointsAdapter(getContext(), accessArrayList, new AccessPointsAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(int position) {
-
-            }
-
-        }, new AccessPointsAdapter.OnItemLongClickListener() {
-            @Override
-            public void onItemLongClick(int position) {
-                View view = mRecyclerView.findViewHolderForAdapterPosition(position).itemView;
-                // accessPointDetail = accessArrayList.get(position);
-                accessPointDetail= new AcessPointDetail(accessArrayList.get(position).getAddress());
-
-                //address.se
-
-            }
-        });
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
-        mRecyclerView.setAdapter(adapter);
         delModeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
@@ -220,8 +199,8 @@ public class CreateOrderFragment extends Fragment {
                 }
 
             }//);
-        //}
-           // }
+            //}
+            // }
 
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
@@ -248,12 +227,34 @@ public class CreateOrderFragment extends Fragment {
         alertDialog.setPositiveButton("OK",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                         range = input.getText().toString();
+                        range = input.getText().toString();
 
                         accessArrayList=new ArrayList<>();
+                        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+
+                        adapter=new AccessPointsAdapter(getContext(), accessArrayList, new AccessPointsAdapter.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(int position) {
+
+                            }
+
+                        }, new AccessPointsAdapter.OnItemLongClickListener() {
+                            @Override
+                            public void onItemLongClick(int position) {
+                                View view = mRecyclerView.findViewHolderForAdapterPosition(position).itemView;
+                                // accessPointDetail = accessArrayList.get(position);
+                                accessPointDetail= new AcessPointDetail(accessArrayList.get(position).getAddress());
+
+                                //address.se
+
+                            }
+                        });
+                        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
+                        mRecyclerView.setAdapter(adapter);
 
                         mCallback.showProgress();
-                         fetchAccessPoint();
+                        fetchAccessPoint();
 //                        Bundle bundle = new Bundle();
 //                        bundle.putString("range", range);
 //                        // set Fragmentclass Arguments
@@ -282,7 +283,7 @@ public class CreateOrderFragment extends Fragment {
 
         String final_street = street+" "+landmark;
         AccessPointAddress addressAccess = new AccessPointAddress(final_street, city, state, country, range);
-       // Toast.makeText(getContext(),address.getStreet(), Toast.LENGTH_LONG).show();
+        // Toast.makeText(getContext(),address.getStreet(), Toast.LENGTH_LONG).show();
         AccessPointAPI accessPointAPI=retrofit2.create(AccessPointAPI.class);
         Call<AccessPointsResponse> accessResponseCall=accessPointAPI.getAccessPoints(addressAccess);
         accessResponseCall.enqueue(new Callback<AccessPointsResponse>() {
@@ -298,8 +299,8 @@ public class CreateOrderFragment extends Fragment {
                         return;
                     }
 
-                   accessArrayList.addAll(access);
-                  adapter.notifyDataSetChanged();
+                    accessArrayList.addAll(access);
+                    adapter.notifyDataSetChanged();
                     Toast.makeText(getContext(),"Fetched sucessfully.", Toast.LENGTH_SHORT).show();
                     Log.d(Tag.MY_TAG,"My Orders success: Body: "+response.body()+"");
                 }else{
@@ -311,7 +312,7 @@ public class CreateOrderFragment extends Fragment {
 
             @Override
             public void onFailure(Call<AccessPointsResponse> call, Throwable t) {
-                 mCallback.hideProgress();
+                mCallback.hideProgress();
                 Toast.makeText(getContext(),"Please check your network connection.", Toast.LENGTH_SHORT).show();
                 Log.d(Tag.MY_TAG, " get access point request submitted to API failed. Message: " +t.getMessage()+"Local msg: "+
                         t.getLocalizedMessage()+"Cause: "+t.getCause());           }
@@ -376,15 +377,15 @@ public class CreateOrderFragment extends Fragment {
         mCallback.showProgress();
 
         if(accessPointDetail.getAddress()== null){
-             order=new Order(size,price,categoryId,productId,paymentStatus,delDate, delMode,weight, address);
+            order=new Order(size,price,categoryId,productId,paymentStatus,delDate, delMode,weight, address);
         }
         else{
-             order=new Order(size,price,categoryId,productId,paymentStatus,delDate, delMode,weight, address, accessPointDetail);
+            order=new Order(size,price,categoryId,productId,paymentStatus,delDate, delMode,weight, address, accessPointDetail);
             // Log
         }
 
         Log.d(Tag.MY_TAG+" order: ","size: "+size+" price: "+price+" delDate: "+delDate+ " categoryId: "
-        +categoryId+" productId: "+productId+" weight: "+weight+" delmode: "+delMode+" paymentstatus: "+paymentStatus);
+                +categoryId+" productId: "+productId+" weight: "+weight+" delmode: "+delMode+" paymentstatus: "+paymentStatus);
         OrderApi orderApi=retrofit.create(OrderApi.class);
         final String xAuth=sharedPreferences.getString(LoginSharedPref.USER_TOKEN,"");
         Call<Order> orderResponse=orderApi.createNewOrder(xAuth,order);
