@@ -116,6 +116,34 @@ public class TargetCustomersActivity extends AppCompatActivity {
     }
 
     private void sendMail() {
+        showProgress();
+        CouponApi couponApi=retrofit.create(CouponApi.class);
+        for(int i=0;i<userArrayList.size();i++){
+            String email=userArrayList.get(i).getEmail();
+            Coupon coupon=new Coupon(targetCustType,email);
+            Call<Coupon> couponResponse=couponApi.createCouponCode(coupon);
+            couponResponse.enqueue(new Callback<Coupon>() {
+                @Override
+                public void onResponse(Call<Coupon> call, Response<Coupon> response) {
+                    hideProgress();
+                    if(response.isSuccessful()){
+                        Toast.makeText(TargetCustomersActivity.this,"Mail sent sucessfully.", Toast.LENGTH_SHORT).show();
+                        Log.d(Tag.MY_TAG,"Coupon code success: Body: "+response.body()+"");
+                    }else{
+                        Toast.makeText(TargetCustomersActivity.this,"Please check your network connection.", Toast.LENGTH_SHORT).show();
+                        Log.d(Tag.MY_TAG, "coupon code post failed. Code: "+response.code());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Coupon> call, Throwable t) {
+                    hideProgress();
+                    Toast.makeText(TargetCustomersActivity.this,"Mail couldn't be sent. Check your network connection.", Toast.LENGTH_SHORT).show();
+                    Log.d(Tag.MY_TAG, "coupon code post submitted to API failed. Message: " +t.getMessage()+"Local msg: "+
+                            t.getLocalizedMessage()+"Ccause: "+t.getCause());
+                }
+            });
+        }
 
     }
 
