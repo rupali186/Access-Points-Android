@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
+import android.support.v7.view.menu.ActionMenuItemView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -57,6 +58,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.multilingual.rupali.accesspoints.Constants.Tag.MY_TAG;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -89,7 +91,7 @@ public class CreateOrderFragment extends Fragment {
     String range;
     Address address;
     AcessPointDetail accessPointDetail;
-    RecyclerView mRecyclerView;
+    RecyclerView accessRecyclerView;
     AccessPointsAdapter adapter;
     TextView toolbarTextView;
     ProgressBar progressBar;
@@ -131,7 +133,7 @@ public class CreateOrderFragment extends Fragment {
         categorySpinner = (Spinner) view.findViewById(R.id.category_spinner);
         productIdSpinner=view.findViewById(R.id.productid_spinner);
         delModeSpinner=view.findViewById(R.id.delivery_mode_spinner);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.access_point_recycler_view);
+        accessRecyclerView = (RecyclerView) view.findViewById(R.id.access_point_recycler_view);
         paymentStatSpinner=view.findViewById(R.id.payment_status_spinner);
         categoryAdapter = ArrayAdapter.createFromResource(getContext(),
                 R.array.categories, android.R.layout.simple_spinner_item);
@@ -186,8 +188,6 @@ public class CreateOrderFragment extends Fragment {
         contactNo = sharedPreferences.getString(LoginSharedPref.USER_CONTACT_NO,"");
 
         address=new Address(hno,street,state,city,country,uname,landmark,pinn,contactNo);
-
-
         delModeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
@@ -199,8 +199,8 @@ public class CreateOrderFragment extends Fragment {
                 }
 
             }//);
-            //}
-            // }
+        //}
+           // }
 
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
@@ -218,6 +218,7 @@ public class CreateOrderFragment extends Fragment {
         alertDialog.setMessage("Enter Range");
 
         final EditText input = new EditText(CreateOrderFragment.this.getActivity());
+
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT);
@@ -227,10 +228,17 @@ public class CreateOrderFragment extends Fragment {
         alertDialog.setPositiveButton("OK",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        range = input.getText().toString();
+                        try{
+                            range = input.getText().toString();
+                            Integer rangeValid = Integer.parseInt(range);
+                        } catch (NumberFormatException e) {
+                            Log.w(MY_TAG, "entered value isn't Integer");
+                            Toast.makeText(getContext(),"Please enter a valid integer with no spaces",Toast.LENGTH_SHORT).show();
+                            return;
+                        }
 
                         accessArrayList=new ArrayList<>();
-                        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                        accessRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
 
                         adapter=new AccessPointsAdapter(getContext(), accessArrayList, new AccessPointsAdapter.OnItemClickListener() {
@@ -242,7 +250,7 @@ public class CreateOrderFragment extends Fragment {
                         }, new AccessPointsAdapter.OnItemLongClickListener() {
                             @Override
                             public void onItemLongClick(int position) {
-                                View view = mRecyclerView.findViewHolderForAdapterPosition(position).itemView;
+                                View view = accessRecyclerView.findViewHolderForAdapterPosition(position).itemView;
                                 // accessPointDetail = accessArrayList.get(position);
                                 accessPointDetail= new AcessPointDetail(accessArrayList.get(position).getAddress());
 
@@ -250,20 +258,11 @@ public class CreateOrderFragment extends Fragment {
 
                             }
                         });
-                        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
-                        mRecyclerView.setAdapter(adapter);
+                        accessRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
+                        accessRecyclerView.setAdapter(adapter);
 
                         mCallback.showProgress();
-                        fetchAccessPoint();
-//                        Bundle bundle = new Bundle();
-//                        bundle.putString("range", range);
-//                        // set Fragmentclass Arguments
-//                        AccessPointFragment fragobj = new AccessPointFragment();
-//                        FragmentManager manager = CreateOrderFragment.this.getActivity().getFragmentManager();
-//                        fragobj.setArguments(bundle);
-//                        FragmentTransaction transaction = manager.beginTransaction();
-//                        transaction.replace(R.id.container_main, fragobj, "Frag");
-//                        transaction.commit();
+                         fetchAccessPoint();
 
 
                     }
@@ -283,7 +282,7 @@ public class CreateOrderFragment extends Fragment {
 
         String final_street = street+" "+landmark;
         AccessPointAddress addressAccess = new AccessPointAddress(final_street, city, state, country, range);
-        // Toast.makeText(getContext(),address.getStreet(), Toast.LENGTH_LONG).show();
+       // Toast.makeText(getContext(),address.getStreet(), Toast.LENGTH_LONG).show();
         AccessPointAPI accessPointAPI=retrofit2.create(AccessPointAPI.class);
         Call<AccessPointsResponse> accessResponseCall=accessPointAPI.getAccessPoints(addressAccess);
         accessResponseCall.enqueue(new Callback<AccessPointsResponse>() {
@@ -299,20 +298,20 @@ public class CreateOrderFragment extends Fragment {
                         return;
                     }
 
-                    accessArrayList.addAll(access);
-                    adapter.notifyDataSetChanged();
+                   accessArrayList.addAll(access);
+                  adapter.notifyDataSetChanged();
                     Toast.makeText(getContext(),"Fetched sucessfully.", Toast.LENGTH_SHORT).show();
                     Log.d(Tag.MY_TAG,"My Orders success: Body: "+response.body()+"");
                 }else{
                     mCallback.hideProgress();
-                    Toast.makeText(getContext(),"Please check your network connection.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(),"No Access Point or check  your internet ", Toast.LENGTH_SHORT).show();
                     Log.d(Tag.MY_TAG, "my orders fetch failed. Code: "+response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<AccessPointsResponse> call, Throwable t) {
-                mCallback.hideProgress();
+                 mCallback.hideProgress();
                 Toast.makeText(getContext(),"Please check your network connection.", Toast.LENGTH_SHORT).show();
                 Log.d(Tag.MY_TAG, " get access point request submitted to API failed. Message: " +t.getMessage()+"Local msg: "+
                         t.getLocalizedMessage()+"Cause: "+t.getCause());           }
@@ -377,15 +376,15 @@ public class CreateOrderFragment extends Fragment {
         mCallback.showProgress();
 
         if(accessPointDetail.getAddress()== null){
-            order=new Order(size,price,categoryId,productId,paymentStatus,delDate, delMode,weight, address);
+             order=new Order(size,price,categoryId,productId,paymentStatus,delDate, delMode,weight, address);
         }
         else{
-            order=new Order(size,price,categoryId,productId,paymentStatus,delDate, delMode,weight, address, accessPointDetail);
+             order=new Order(size,price,categoryId,productId,paymentStatus,delDate, delMode,weight, address, accessPointDetail);
             // Log
         }
 
         Log.d(Tag.MY_TAG+" order: ","size: "+size+" price: "+price+" delDate: "+delDate+ " categoryId: "
-                +categoryId+" productId: "+productId+" weight: "+weight+" delmode: "+delMode+" paymentstatus: "+paymentStatus);
+        +categoryId+" productId: "+productId+" weight: "+weight+" delmode: "+delMode+" paymentstatus: "+paymentStatus);
         OrderApi orderApi=retrofit.create(OrderApi.class);
         final String xAuth=sharedPreferences.getString(LoginSharedPref.USER_TOKEN,"");
         Call<Order> orderResponse=orderApi.createNewOrder(xAuth,order);
@@ -455,6 +454,12 @@ public class CreateOrderFragment extends Fragment {
             Toast.makeText(getContext(),"Payment status should be paid for store delivery and access points." +
                     "!!",Toast.LENGTH_SHORT).show();
             return  false;
+        }
+        if(delMode.equals(StringConstants.DeliveryMode.ACCESS_PTS) && accessPointDetail.getAddress() == null ){
+            Toast.makeText(getContext(),"Choose an access point" +
+                    "!!",Toast.LENGTH_SHORT).show();
+            return  false;
+
         }
         Date date = Calendar.getInstance().getTime();
         SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
