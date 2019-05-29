@@ -54,16 +54,19 @@ public class AccessPointsAdapter extends RecyclerView.Adapter<AccessPointsAdapte
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                clickedPos=position;
                 listener.onItemClick(position);
+                notifyDataSetChanged();
+                //return false;
             }
         });
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                clickedPos=position;
+
                 onItemLongClickListener.onItemLongClick(position);
-                notifyDataSetChanged();
                 return false;
+
             }
         });
         if(clickedPos==position){

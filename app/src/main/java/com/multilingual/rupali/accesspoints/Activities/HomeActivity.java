@@ -33,6 +33,7 @@ import com.multilingual.rupali.accesspoints.Constants.Tag;
 import com.multilingual.rupali.accesspoints.R;
 import com.multilingual.rupali.accesspoints.api.UserApi;
 import com.multilingual.rupali.accesspoints.config.APIClient;
+import com.multilingual.rupali.accesspoints.fragments.AboutFragment;
 import com.multilingual.rupali.accesspoints.fragments.AccountDetailsFragment;
 import com.multilingual.rupali.accesspoints.fragments.CreateOrderFragment;
 import com.multilingual.rupali.accesspoints.fragments.EditAccountDetailsFragment;
@@ -359,6 +360,8 @@ public class HomeActivity extends AppCompatActivity
             toolbarTextView.setText("Account");
 
         } else if (id == R.id.nav_about_us) {
+            aboutUsOnClick();
+            toolbarTextView.setText("About Us");
 
         } else if (id == R.id.nav_share) {
             try {
@@ -384,6 +387,13 @@ public class HomeActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void aboutUsOnClick() {
+        AboutFragment aboutFragment= new AboutFragment();
+        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.container_main,aboutFragment,"ABOUT").commit();
     }
 
     private void allOrderOnClick() {

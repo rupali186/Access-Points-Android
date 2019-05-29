@@ -4,6 +4,21 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="about_content">
+        The customers of E-Commerce sites use retail websites to place their orders for getting it
+        delivered to home addresses.  Access Points like lockers solve problem of doing unattended delivery,
+        and where customer can and with thei convenience use Access Points to pick up or return their packages.
+        Lockers are ideal for people who live in apartment buildings without a mailroom or houses with sketchy neighbours
+        \n Lockers are secure, self-service kiosks which can be located across the globe. Lockers allow you to pick up your package at
+        a time thats convenient for you — even evenings and weekends. So, no more worrying about packages left at your door while you\'re out.
+        \n\nLockers are located in places you already go, like Whole Foods Markets and convenience stores. It\'s a safe bet there\'s one
+        (or more) located near your home, office or school.
+        Simply add a locker location to your address book as a delivery address, and then choose that address when you check out.
+        Once your package is delivered, you\'ll receive an email with a six-digit code to your locker, and you\'ll have three days to
+        pick it up.
+
+
+    </string>
     <string name="no_account">Don\'t have an account? Use Sign Up</string>
     <string name="tab_text_1">Sign In</string>
     <string name="tab_text_2">Sign Up</string>
