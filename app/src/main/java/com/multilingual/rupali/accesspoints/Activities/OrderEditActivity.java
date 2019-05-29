@@ -48,6 +48,7 @@ public class OrderEditActivity extends AppCompatActivity {
     Bundle bundle;
     Intent intent;
     String orderID="";
+    String oldOrderStatus="";
     SharedPreferences sharedPreferences;
 
     @Override
@@ -87,8 +88,12 @@ public class OrderEditActivity extends AppCompatActivity {
             return;
         }
         orderID=bundle.getString(BundleArg.ORDER_ID,"");
+        oldOrderStatus=bundle.getString(BundleArg.ORDER_STATUS,"");
         if(orderID.isEmpty()){
             Toast.makeText(this,"Order Id is required.",Toast.LENGTH_SHORT).show();
+            return;
+        }else if(oldOrderStatus.equalsIgnoreCase(orderStatus)){
+            Toast.makeText(this,"Order status is already "+oldOrderStatus+". Please select a new one to update it.",Toast.LENGTH_SHORT).show();
             return;
         }
         final String xAuth=sharedPreferences.getString(LoginSharedPref.USER_TOKEN,"");

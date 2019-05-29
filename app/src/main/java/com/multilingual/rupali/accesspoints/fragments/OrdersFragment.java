@@ -118,6 +118,7 @@ public class OrdersFragment extends Fragment {
             return;
         }
         String orderId=orderArrayList.get(position).get_id();
+        String status=orderArrayList.get(position).getStatus();
         if(orderId.isEmpty()){
             Toast.makeText(getContext(),"Order id is required to edit the order.",Toast.LENGTH_SHORT).show();
             return;
@@ -125,6 +126,7 @@ public class OrdersFragment extends Fragment {
         Intent intent=new Intent(getContext(), OrderEditActivity.class);
         Bundle bundle=new Bundle();
         bundle.putString(BundleArg.ORDER_ID,orderId);
+        bundle.putString(BundleArg.ORDER_STATUS,status);
         intent.putExtras(bundle);
         startActivity(intent);
 

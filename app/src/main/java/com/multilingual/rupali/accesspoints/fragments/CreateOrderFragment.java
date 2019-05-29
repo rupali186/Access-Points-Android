@@ -192,7 +192,9 @@ public class CreateOrderFragment extends Fragment {
         delModeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                if(position==2){
+                String selectedItem = parentView.getItemAtPosition(position).toString();
+                if(selectedItem.equals("access_points")) {
+                    // do your stuff
                     showRangeDialogBox();
                 }
                 else{
@@ -368,7 +370,6 @@ public class CreateOrderFragment extends Fragment {
 
     private void postOrder() {
         Order order;
-        Toast.makeText(getContext(),accessPointDetail.getAddress(), Toast.LENGTH_LONG).show();
         mCallback.showProgress();
 
         if(accessPointDetail.getAddress()== null){
