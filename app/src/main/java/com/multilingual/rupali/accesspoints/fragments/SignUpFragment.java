@@ -157,6 +157,8 @@ public class SignUpFragment extends Fragment {
             return;
         }
         showConfirmSubmissionDialog();
+//        Toast.makeText(getContext(),"SignUpButton clicked",Toast.LENGTH_SHORT).show();
+//        postDemoUser();
     }
 
     private void postUser() {
@@ -195,6 +197,52 @@ public class SignUpFragment extends Fragment {
 
         });
     }
+//    private void postDemoUser() {
+////        mCallback.showProgress();
+//        Address address;
+//        String password="abcdefg",confirmPass="abcdefg",uname="demouser",dob= dob=01 + "-" + (10 + 1) + "-" +2014,
+//                contactNo="8750678199",gender="female",country="india",state="haryana",city="xvghd",landmark="shdjjdd",
+//                street="sector-11",hno="123",pin="121001",userPhoneCode="+91";
+//        address=new Address(hno,street,state,city,country,uname,landmark,Integer.parseInt(pin),contactNo);
+//        contactNo=userPhoneCode+" "+contactNo;
+//        ArrayList<String> contactNos=new ArrayList<>();
+//        ArrayList<Address> addresses=new ArrayList<>();
+//        contactNos.add(contactNo);
+//        addresses.add(address);
+//        for(int i=0;i<10000;i++) {
+//            User user = new User("abcd"+i+"@gmail.com", password, uname, contactNos, dob, gender, addresses);
+//            UserApi userApi = retrofit.create(UserApi.class);
+//            Call<User> userResponse = userApi.createNewUser(user);
+//            final int finalI = i;
+//            userResponse.enqueue(new Callback<User>() {
+//                @Override
+//                public void onResponse(Call<User> call, Response<User> response) {
+//                    if (response.isSuccessful()) {
+////                        User user = response.body();
+////                        saveUserInSharedPref(user);
+////                        Toast.makeText(getContext(), "User Created Successfully.", Toast.LENGTH_SHORT).show();
+//                        Log.d(Tag.MY_TAG, "User"+ finalI +"creted Success: Body: " + response.body() + "");
+////                        getActivity().onBackPressed();
+//                    } else {
+////                        mCallback.hideProgress();
+//                        Toast.makeText(getContext(), "Please check your network connection or the User Already Exists", Toast.LENGTH_SHORT).show();
+//                        Log.d(Tag.MY_TAG, "sign up post submitted to API failed." + response.code() + " Headers:" +
+//                                response.headers() + "Message: " + response.message() + "Call :" + call.toString() + response.toString());
+//                        Log.d(Tag.MY_TAG, "post submitted to API failed.");
+//                    }
+//                }
+//
+//                @Override
+//                public void onFailure(Call<User> call, Throwable t) {
+////                    mCallback.hideProgress();
+//                    Toast.makeText(getContext(), "Please check your network connection or the User Already Exists", Toast.LENGTH_SHORT).show();
+//                    Log.d(Tag.MY_TAG, "post submitted to API failed." + t.getMessage());
+//                }
+//
+//            });
+////            mCallback.hideProgress();
+//        }
+//    }
     private void saveUserInSharedPref(User user) {
         SharedPreferences.Editor editor=sharedPreferences.edit();
         Address uAd=user.getAddress().get(0);

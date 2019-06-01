@@ -29,15 +29,17 @@ tools:context=".fragments.CreateOrderFragment">
 
     <EditText
         android:id="@+id/order_length"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/text_input_border"
         android:ems="10"
         android:hint="Length"
-        android:padding="5dp"
-        android:background="@drawable/text_input_border"
         android:inputType="number"
+        android:padding="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textview1" />
 
@@ -229,6 +231,7 @@ tools:context=".fragments.CreateOrderFragment">
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:text="Delivery Mode"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
@@ -261,9 +264,8 @@ tools:context=".fragments.CreateOrderFragment">
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/access_point_recycler_view" />
+        app:layout_constraintTop_toBottomOf="@+id/promo_code_button" />
 
     <Spinner
         android:id="@+id/payment_status_spinner"
@@ -282,7 +284,6 @@ tools:context=".fragments.CreateOrderFragment">
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:background="@color/gray"
@@ -305,6 +306,23 @@ tools:context=".fragments.CreateOrderFragment">
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/payment_status_spinner" />
+
+    <Button
+        android:id="@+id/promo_code_button"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:drawableLeft="@drawable/ic_discount"
+        android:drawableRight="@drawable/ic_chevron_right_black_24dp"
+        android:drawableTint="@color/darkGray2"
+        android:text="Apply Promo Code"
+        android:textAllCaps="false"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@color/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/access_point_recycler_view" />
 
 </android.support.constraint.ConstraintLayout>
 </android.support.v4.widget.NestedScrollView>

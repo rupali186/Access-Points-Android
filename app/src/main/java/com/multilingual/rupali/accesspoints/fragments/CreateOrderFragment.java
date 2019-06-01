@@ -3,16 +3,13 @@ package com.multilingual.rupali.accesspoints.fragments;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
-import android.support.v7.view.menu.ActionMenuItemView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -31,6 +28,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.multilingual.rupali.accesspoints.Activities.TargetCustomersActivity;
 import com.multilingual.rupali.accesspoints.Constants.BundleArg;
 import com.multilingual.rupali.accesspoints.Constants.LoginSharedPref;
 import com.multilingual.rupali.accesspoints.Constants.StringConstants;
@@ -38,12 +36,15 @@ import com.multilingual.rupali.accesspoints.Constants.Tag;
 import com.multilingual.rupali.accesspoints.R;
 import com.multilingual.rupali.accesspoints.adapters.AccessPointsAdapter;
 import com.multilingual.rupali.accesspoints.api.AccessPointAPI;
+import com.multilingual.rupali.accesspoints.api.CouponApi;
 import com.multilingual.rupali.accesspoints.api.OrderApi;
 import com.multilingual.rupali.accesspoints.config.APIClient;
-import com.multilingual.rupali.accesspoints.config.APIClient2;
+import com.multilingual.rupali.accesspoints.config.APIClientAccessPts;
 import com.multilingual.rupali.accesspoints.models.AccessPointAddress;
 import com.multilingual.rupali.accesspoints.models.AcessPointDetail;
 import com.multilingual.rupali.accesspoints.models.Address;
+import com.multilingual.rupali.accesspoints.models.Coupon;
+import com.multilingual.rupali.accesspoints.models.EditCoupon;
 import com.multilingual.rupali.accesspoints.models.Order;
 import com.multilingual.rupali.accesspoints.models.Size;
 import com.multilingual.rupali.accesspoints.response.AccessPointsResponse;
@@ -65,8 +66,6 @@ import static com.multilingual.rupali.accesspoints.Constants.Tag.MY_TAG;
  * A simple {@link Fragment} subclass.
  */
 public class CreateOrderFragment extends Fragment {
-    String hno;
-    String street, state, country, city, uname, landmark, pin, contactNo;
     EditText lengthET;
     EditText widthET;
     EditText heightET;
@@ -79,28 +78,27 @@ public class CreateOrderFragment extends Fragment {
     Spinner delModeSpinner;
     Spinner paymentStatSpinner;
     Button createOrderButton;
+    Button applyPromoCodeButton;
+    RecyclerView accessRecyclerView;
     ArrayAdapter<CharSequence> categoryAdapter;
     ArrayAdapter<CharSequence> prodIdAdapter;
     ArrayAdapter<CharSequence> delModeAdapter;
     ArrayAdapter<CharSequence> payStatAdapter;
+    AccessPointsAdapter adapter;
+    Retrofit retrofit, retrofit2;
     String delMode,paymentStatus,oDate,delDate;
+    String userEmail;
+    String hno;
+    String street, state, country, city, uname, landmark, pin, contactNo;
+    String range;
+    Address address;
     Size size;
     Integer price,categoryId,productId,weight;
     SharedPreferences sharedPreferences;
-    Retrofit retrofit, retrofit2;
     ProgressListener mCallback;
-    String range;
-    Address address;
     AcessPointDetail accessPointDetail;
-    RecyclerView accessRecyclerView;
-    AccessPointsAdapter adapter;
-    TextView toolbarTextView;
-    ProgressBar progressBar;
-    ConstraintLayout accessContent;
     ArrayList<AcessPointDetail> accessArrayList;
-    int fetchAccessType= BundleArg.ACCESS_POINTS;
 
-    //for progress dialog
     public interface ProgressListener{
         void showProgress();
         void hideProgress();
@@ -131,6 +129,7 @@ public class CreateOrderFragment extends Fragment {
         delDateTV=view.findViewById(R.id.order_del_date);
         delDateIV=view.findViewById(R.id.dob_dropdown);
         createOrderButton=view.findViewById(R.id.create_order_button);
+        applyPromoCodeButton=view.findViewById(R.id.promo_code_button);
         categorySpinner = (Spinner) view.findViewById(R.id.category_spinner);
         productIdSpinner=view.findViewById(R.id.productid_spinner);
         delModeSpinner=view.findViewById(R.id.delivery_mode_spinner);
@@ -158,13 +157,19 @@ public class CreateOrderFragment extends Fragment {
 
         //retrofit variables
         retrofit= APIClient.getClient();
-        retrofit2= APIClient2.getClient();
+        retrofit2= APIClientAccessPts.getClient();
 
         //Listeners
         createOrderButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 createOrder(view);
+            }
+        });
+        applyPromoCodeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                applyPromoCodeOnClick();
             }
         });
         delDateIV.setOnClickListener(new View.OnClickListener() {
@@ -187,6 +192,7 @@ public class CreateOrderFragment extends Fragment {
         uname = sharedPreferences.getString(LoginSharedPref.USER_NAME,"");
         Integer pinn = sharedPreferences.getInt(LoginSharedPref.USER_PICODE,0);
         contactNo = sharedPreferences.getString(LoginSharedPref.USER_CONTACT_NO,"");
+        userEmail=sharedPreferences.getString(LoginSharedPref.USER_EMAIL,"");
 
         address=new Address(hno,street,state,city,country,uname,landmark,pinn,contactNo);
         delModeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -201,10 +207,7 @@ public class CreateOrderFragment extends Fragment {
                     accessPointDetail = new AcessPointDetail();
                 }
 
-            }//);
-        //}
-           // }
-
+            }
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
                 // your code here
@@ -212,6 +215,77 @@ public class CreateOrderFragment extends Fragment {
 
         });
         return view;
+    }
+
+    private void applyPromoCodeOnClick() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Enter your Promo Code");
+        LinearLayout layout = new LinearLayout(getContext());
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        final EditText promoCodeET = new EditText(getContext());
+        promoCodeET.setHint("Type your code here...");
+        layout.addView(promoCodeET);
+
+        builder.setView(layout);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String code = promoCodeET.getText().toString();
+                searchCouponCode(code,userEmail);
+
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
+
+    private void searchCouponCode(String code,String user_email) {
+        CouponApi couponApi=retrofit.create(CouponApi.class);
+        Call<Coupon> couponCall=couponApi.searchCouponCode(code,user_email);
+        couponCall.enqueue(new Callback<Coupon>() {
+            @Override
+            public void onResponse(Call<Coupon> call, Response<Coupon> response) {
+                if(response.isSuccessful()){
+
+                }else{
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Coupon> call, Throwable t) {
+
+            }
+        });
+
+    }
+
+    private void updateCouponCode(String couponId){
+        CouponApi couponApi=retrofit.create(CouponApi.class);
+        EditCoupon editCoupon=new EditCoupon(true);
+        Call<Coupon> couponCall=couponApi.updateCoupon(couponId,editCoupon);
+        couponCall.enqueue(new Callback<Coupon>() {
+            @Override
+            public void onResponse(Call<Coupon> call, Response<Coupon> response) {
+                if(response.isSuccessful()){
+
+                }else{
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Coupon> call, Throwable t) {
+
+            }
+        });
     }
 
     private void showRangeDialogBox() {
@@ -416,12 +490,17 @@ public class CreateOrderFragment extends Fragment {
         delMode=delModeSpinner.getSelectedItem().toString();
         paymentStatus=paymentStatSpinner.getSelectedItem().toString();
         categoryId=categorySpinner.getSelectedItemPosition()+1;
-        size.setLength(Integer.parseInt(lengthET.getText().toString()));
-        size.setWidth(Integer.parseInt(widthET.getText().toString()));
-        size.setHeight(Integer.parseInt(heightET.getText().toString()));
-        price=Integer.parseInt(priceET.getText().toString());
-        productId=Integer.parseInt(productIdSpinner.getSelectedItem().toString());
-        weight=Integer.parseInt(weightET.getText().toString());
+        try{
+            size.setLength(Integer.parseInt(lengthET.getText().toString()));
+            size.setWidth(Integer.parseInt(widthET.getText().toString()));
+            size.setHeight(Integer.parseInt(heightET.getText().toString()));
+            price=Integer.parseInt(priceET.getText().toString());
+            productId=Integer.parseInt(productIdSpinner.getSelectedItem().toString());
+            weight=Integer.parseInt(weightET.getText().toString());
+        }catch (NumberFormatException e){
+            Log.w(MY_TAG, "entered value isn't Integer");
+        }
+
 //        if(userId.isEmpty()){
 //            Toast.makeText(getContext(),"user should be logged In" +
 //                    "!!",Toast.LENGTH_SHORT).show();
