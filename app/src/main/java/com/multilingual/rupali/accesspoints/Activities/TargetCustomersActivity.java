@@ -27,7 +27,7 @@ import com.multilingual.rupali.accesspoints.config.APIClient;
 import com.multilingual.rupali.accesspoints.config.APIClientMail;
 import com.multilingual.rupali.accesspoints.models.Coupon;
 import com.multilingual.rupali.accesspoints.models.CouponMail;
-import com.multilingual.rupali.accesspoints.models.CouponResponse;
+import com.multilingual.rupali.accesspoints.response.CouponResponse;
 import com.multilingual.rupali.accesspoints.models.User;
 import com.multilingual.rupali.accesspoints.response.UserResponse;
 
@@ -144,40 +144,40 @@ public class TargetCustomersActivity extends AppCompatActivity {
             for(int i=0;i<userArrayList.size();i++){
                 final String user_email=userArrayList.get(i).getEmail();
                 final String name = userArrayList.get(i).getU_name();
-                Toast.makeText(TargetCustomersActivity.this,user_email+discount+expiry_date, Toast.LENGTH_SHORT).show();
-                Coupon coupon=new Coupon(discount, user_email, expiry_date);
-                Call<Coupon> couponResponse=couponApi.createCouponCode(coupon);
-                couponResponse.enqueue(new Callback<Coupon>() {
+//                Toast.makeText(TargetCustomersActivity.this,user_email+discount+expiry_date, Toast.LENGTH_SHORT).show();
+                final Coupon coupon=new Coupon(discount, user_email, expiry_date);
+                Call<CouponResponse> couponResponse=couponApi.createCouponCode(coupon);
+                couponResponse.enqueue(new Callback<CouponResponse>() {
                     @Override
-                    public void onResponse(Call<Coupon> call, Response<Coupon> response) {
-
+                    public void onResponse(Call<CouponResponse> call, Response<CouponResponse> response) {
                         if(response.isSuccessful()){
                             MailAPI mailApi = retrofitMail.create(MailAPI.class);
-                            Coupon couponResponse = response.body();
-                            Toast.makeText(TargetCustomersActivity.this,couponResponse.getCode()+" ", Toast.LENGTH_SHORT).show();
+                            CouponResponse couponResponse = response.body();
+                            Coupon coupon1=couponResponse.coupon;
+//                            Toast.makeText(TargetCustomersActivity.this,coupon1.getCode()+" ", Toast.LENGTH_SHORT).show();
 
                             //send coupon mail
-                            CouponMail couponMail = new CouponMail(user_email,name, couponResponse.getCode());
+                            CouponMail couponMail = new CouponMail(user_email,name, coupon1.getCode());
                             Call<CouponMail> couponResponseMail=mailApi.sendCoupon(couponMail);
                             couponResponseMail.enqueue(new Callback<CouponMail>() {
-                            @Override
-                            public void onResponse(Call<CouponMail> call, Response<CouponMail> responseMail) {
-                                hideProgress();
-                                if(responseMail.isSuccessful()){
-                                    Log.d(Tag.MY_TAG,"Mail sent successfully "+responseMail.body()+"");
-                                }else{
-                                    Log.d(Tag.MY_TAG, "mail sending failed "+responseMail.code());
+                                @Override
+                                public void onResponse(Call<CouponMail> call, Response<CouponMail> responseMail) {
+                                    hideProgress();
+                                    if(responseMail.isSuccessful()){
+                                        Log.d(Tag.MY_TAG,"Mail sent successfully "+responseMail.body()+"");
+                                    }else{
+                                        Log.d(Tag.MY_TAG, "mail sending failed "+responseMail.code());
+                                    }
                                 }
-                            }
 
-                            @Override
-                            public void onFailure(Call<CouponMail> call, Throwable t) {
-                                hideProgress();
-                                Log.d(Tag.MY_TAG, "Mail sending failed. Message: " +t.getMessage()+"Local msg: "+
-                                        t.getLocalizedMessage()+"Ccause: "+t.getCause());
-                            }
-                        });
-                            Toast.makeText(TargetCustomersActivity.this,"Coupon generated s sucessfully.", Toast.LENGTH_SHORT).show();
+                                @Override
+                                public void onFailure(Call<CouponMail> call, Throwable t) {
+                                    hideProgress();
+                                    Log.d(Tag.MY_TAG, "Mail sending failed. Message: " +t.getMessage()+"Local msg: "+
+                                            t.getLocalizedMessage()+"Ccause: "+t.getCause());
+                                }
+                            });
+                            Toast.makeText(TargetCustomersActivity.this,"Coupon generated sucessfully.", Toast.LENGTH_SHORT).show();
                             Log.d(Tag.MY_TAG,"Coupon code success: Body: "+response.body()+"");
                         }else{
                             Toast.makeText(TargetCustomersActivity.this,"Please check your network connection.", Toast.LENGTH_SHORT).show();
@@ -186,7 +186,7 @@ public class TargetCustomersActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<Coupon> call, Throwable t) {
+                    public void onFailure(Call<CouponResponse> call, Throwable t) {
                         hideProgress();
                         Toast.makeText(TargetCustomersActivity.this,"Coupon can't be generated. Check your network connection.", Toast.LENGTH_SHORT).show();
                         Log.d(Tag.MY_TAG, "coupon code post submitted to API failed. Message: " +t.getMessage()+"Local msg: "+

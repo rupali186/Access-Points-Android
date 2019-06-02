@@ -3,17 +3,13 @@ package com.multilingual.rupali.accesspoints.fragments;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
-import android.support.v7.view.menu.ActionMenuItemView;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -32,7 +28,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.multilingual.rupali.accesspoints.Activities.TargetCustomersActivity;
 import com.multilingual.rupali.accesspoints.Constants.BundleArg;
 import com.multilingual.rupali.accesspoints.Constants.LoginSharedPref;
 import com.multilingual.rupali.accesspoints.Constants.StringConstants;
@@ -50,12 +45,13 @@ import com.multilingual.rupali.accesspoints.models.AccessPointAddress;
 import com.multilingual.rupali.accesspoints.models.AcessPointDetail;
 import com.multilingual.rupali.accesspoints.models.Address;
 import com.multilingual.rupali.accesspoints.models.Coupon;
-import com.multilingual.rupali.accesspoints.models.Coupon;
 import com.multilingual.rupali.accesspoints.models.EditCoupon;
 import com.multilingual.rupali.accesspoints.models.Order;
 import com.multilingual.rupali.accesspoints.models.Size;
 import com.multilingual.rupali.accesspoints.response.AccessPointsResponse;
+import com.multilingual.rupali.accesspoints.response.CouponResponse;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -98,7 +94,7 @@ public class CreateOrderFragment extends Fragment {
     String delMode,paymentStatus,oDate,delDate;
     Size size;
     String userEmail;
-    Integer price,categoryId,productId,weight;
+    Integer price,categoryId,productId,weight,discountOnPrice=0;
     SharedPreferences sharedPreferences;
     Retrofit  retrofitMail;
     ProgressListener mCallback;
@@ -110,6 +106,7 @@ public class CreateOrderFragment extends Fragment {
     ConstraintLayout accessContent;
     ArrayList<AcessPointDetail> accessArrayList;
     int fetchAccessType= BundleArg.ACCESS_POINTS;
+    boolean couponUsed=false;
 
     //for progress dialog
     public interface ProgressListener{
@@ -187,6 +184,13 @@ public class CreateOrderFragment extends Fragment {
                 applyPromoCodeOnClick();
             }
         });
+        applyPromoCodeButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                applyPromoCodeOnLongClick();
+                return true;
+            }
+        });
         delDateIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -232,7 +236,24 @@ public class CreateOrderFragment extends Fragment {
         return view;
     }
 
-    private void applyPromoCodeOnClick() {
+    private void applyPromoCodeOnLongClick() {
+        if(couponUsed){
+            try {
+                mCallback.showProgress();
+                Thread.sleep(2000);
+                price+=discountOnPrice;
+                priceET.setText(price+"");
+                applyPromoCodeButton.setText("Apply Promo Code");
+                applyPromoCodeButton.setTextColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
+                couponUsed=false;
+                mCallback.hideProgress();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void fetchDiscount() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Enter your Promo Code");
         LinearLayout layout = new LinearLayout(getContext());
@@ -261,22 +282,65 @@ public class CreateOrderFragment extends Fragment {
         builder.show();
     }
 
+    private void applyPromoCodeOnClick() {
+        if(!fetchData()){
+            return;
+        }
+        if(!couponUsed) {
+            fetchDiscount();
+        }else{
+           Toast.makeText(getContext(),"You have already used a promo code on this order. Long click to remove the promo code.",Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
     private void searchCouponCode(String code,String user_email) {
         CouponApi couponApi=retrofit.create(CouponApi.class);
-        Call<Coupon> couponCall=couponApi.searchCouponCode(code,user_email);
-        couponCall.enqueue(new Callback<Coupon>() {
+        Call<CouponResponse> couponResponseCall=couponApi.searchCouponCode(code,user_email);
+        couponResponseCall.enqueue(new Callback<CouponResponse>() {
             @Override
-            public void onResponse(Call<Coupon> call, Response<Coupon> response) {
+            public void onResponse(Call<CouponResponse> call, Response<CouponResponse> response) {
                 if(response.isSuccessful()){
+                    CouponResponse couponResponse = response.body();
+                    Coupon coupon=couponResponse.coupon;
+                    Date currentDate = Calendar.getInstance().getTime();
+                    String formattedExpiryDate=coupon.getExpiry_date();
+                    int discount=coupon.getDiscount();
+                    try {
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+                        Date expiryDate = dateFormat.parse(formattedExpiryDate);
+                        if(currentDate.after(expiryDate)){
+                            Toast.makeText(getContext(),"Your Coupon has been expired",Toast.LENGTH_SHORT).show();
+                        }else{
+                            discountOnPrice=(price*discount)/100;
+                            price-=discountOnPrice;
+                            priceET.setText(price+"");
+                            applyPromoCodeButton.setText("You got a discount of "+discount+"% on this order. Final Amount to be paid: "+price);
+                            couponUsed=true;
+                            applyPromoCodeButton.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
+                            Toast.makeText(getContext(),"\"You got a discount of \"+discount+\"% on this order. Final Amount to be paid: \"+price",Toast.LENGTH_SHORT).show();
+
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                        Toast.makeText(getContext(),"An exception occured while parsing discount.",Toast.LENGTH_SHORT).show();
+                        Log.d(MY_TAG,"An exception occured while parsing discount."+e.getLocalizedMessage()+e.getMessage()+e.getCause());
+
+                    }
 
                 }else{
+                    Toast.makeText(getContext(),"Make sure you entered an unused coupon code or check " +
+                            "your network connection.",Toast.LENGTH_SHORT).show();
+                    Log.d(MY_TAG,"Search coupon api failed"+response.code());
 
                 }
             }
 
             @Override
-            public void onFailure(Call<Coupon> call, Throwable t) {
-
+            public void onFailure(Call<CouponResponse> call, Throwable t) {
+                Toast.makeText(getContext(),"Make sure you entered an unused coupon code or check " +
+                        "your network connection.",Toast.LENGTH_SHORT).show();
+                Log.d(MY_TAG,"Search coupon api failed"+t.getMessage());
             }
         });
 
@@ -285,10 +349,10 @@ public class CreateOrderFragment extends Fragment {
     private void updateCouponCode(String couponId){
         CouponApi couponApi=retrofit.create(CouponApi.class);
         EditCoupon editCoupon=new EditCoupon(true);
-        Call<Coupon> couponCall=couponApi.updateCoupon(couponId,editCoupon);
-        couponCall.enqueue(new Callback<Coupon>() {
+        Call<CouponResponse> couponResponseCall=couponApi.updateCoupon(couponId,editCoupon);
+        couponResponseCall.enqueue(new Callback<CouponResponse>() {
             @Override
-            public void onResponse(Call<Coupon> call, Response<Coupon> response) {
+            public void onResponse(Call<CouponResponse> call, Response<CouponResponse> response) {
                 if(response.isSuccessful()){
 
                 }else{
@@ -297,10 +361,11 @@ public class CreateOrderFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<Coupon> call, Throwable t) {
+            public void onFailure(Call<CouponResponse> call, Throwable t) {
 
             }
         });
+
     }
 
     private void showRangeDialogBox() {
