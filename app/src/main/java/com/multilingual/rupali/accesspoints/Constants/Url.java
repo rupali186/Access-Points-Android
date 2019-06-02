@@ -8,5 +8,6 @@ public class Url {
     public static final String BASE_URL="https://access-points.herokuapp.com";
 //    public  static final String BASE_URL="http://192.168.1.7:3000/";                   //phone wifi
 //    public  static final String BASE_URL="http://192.168.43.1:3000/";                   //phone jio
+    public static final String BASE_URL_MAIL="https://access-point.herokuapp.com";
 
 }

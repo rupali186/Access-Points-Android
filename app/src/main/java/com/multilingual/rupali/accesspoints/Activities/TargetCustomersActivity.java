@@ -1,10 +1,9 @@
 package com.multilingual.rupali.accesspoints.Activities;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,10 +21,13 @@ import com.multilingual.rupali.accesspoints.Constants.Tag;
 import com.multilingual.rupali.accesspoints.R;
 import com.multilingual.rupali.accesspoints.adapters.TargetcustomerAdapter;
 import com.multilingual.rupali.accesspoints.api.CouponApi;
+import com.multilingual.rupali.accesspoints.api.MailAPI;
 import com.multilingual.rupali.accesspoints.api.UserApi;
 import com.multilingual.rupali.accesspoints.config.APIClient;
+import com.multilingual.rupali.accesspoints.config.APIClientMail;
 import com.multilingual.rupali.accesspoints.models.Coupon;
-import com.multilingual.rupali.accesspoints.models.SignInUser;
+import com.multilingual.rupali.accesspoints.models.CouponMail;
+import com.multilingual.rupali.accesspoints.models.CouponResponse;
 import com.multilingual.rupali.accesspoints.models.User;
 import com.multilingual.rupali.accesspoints.response.UserResponse;
 
@@ -35,7 +37,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class TargetCustomersActivity extends AppCompatActivity {
     RecyclerView targetCustRecyclerView;
@@ -43,9 +44,11 @@ public class TargetCustomersActivity extends AppCompatActivity {
     ProgressBar progressBar;
     ConstraintLayout targetCustContent;
     ArrayList<User> userArrayList;
+    ArrayList<User> users;
     TargetcustomerAdapter targetcustomerAdapter;
-    Retrofit retrofit;
-    int threshold,limit;
+    Retrofit retrofit, retrofitMail;
+    int threshold,limit, discount;
+    String expiry_date;
     int targetCustType=BundleArg.TARGET_CUSTOMERS;
     Bundle bundle;
     @Override
@@ -69,6 +72,7 @@ public class TargetCustomersActivity extends AppCompatActivity {
         targetCustRecyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
         targetCustRecyclerView.setAdapter(targetcustomerAdapter);
         retrofit= APIClient.getClient();
+        retrofitMail = APIClientMail.getClientMail();
         Intent intent=getIntent();
         bundle=intent.getExtras();
         if(bundle!=null){
@@ -115,36 +119,82 @@ public class TargetCustomersActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @SuppressLint("RestrictedApi")
     private void sendMail() {
         showProgress();
-        CouponApi couponApi=retrofit.create(CouponApi.class);
-        for(int i=0;i<userArrayList.size();i++){
-            String email=userArrayList.get(i).getEmail();
-            Coupon coupon=new Coupon(targetCustType,email);
-            Call<Coupon> couponResponse=couponApi.createCouponCode(coupon);
-            couponResponse.enqueue(new Callback<Coupon>() {
-                @Override
-                public void onResponse(Call<Coupon> call, Response<Coupon> response) {
-                    hideProgress();
-                    if(response.isSuccessful()){
-                        Toast.makeText(TargetCustomersActivity.this,"Mail sent sucessfully.", Toast.LENGTH_SHORT).show();
-                        Log.d(Tag.MY_TAG,"Coupon code success: Body: "+response.body()+"");
-                    }else{
-                        Toast.makeText(TargetCustomersActivity.this,"Please check your network connection.", Toast.LENGTH_SHORT).show();
-                        Log.d(Tag.MY_TAG, "coupon code post failed. Code: "+response.code());
+        Bundle bundle = new Bundle();
+        bundle.putInt(BundleArg.TARGET_CUST_TYPE, targetCustType);
+        Intent intent=new Intent(TargetCustomersActivity.this, CouponMailActivity.class);
+        intent.putExtras(bundle);
+        startActivityForResult(intent, 2, bundle);
+
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        // check if the request code is same as what is passed  here it is 2
+        if(resultCode==2)
+        {
+            expiry_date=data.getStringExtra("EXPIRY_DATE");
+            discount = data.getIntExtra("DISCOUNT", 0);
+            final CouponApi couponApi=retrofit.create(CouponApi.class);
+            for(int i=0;i<userArrayList.size();i++){
+                final String user_email=userArrayList.get(i).getEmail();
+                final String name = userArrayList.get(i).getU_name();
+                Toast.makeText(TargetCustomersActivity.this,user_email+discount+expiry_date, Toast.LENGTH_SHORT).show();
+                Coupon coupon=new Coupon(discount, user_email, expiry_date);
+                Call<Coupon> couponResponse=couponApi.createCouponCode(coupon);
+                couponResponse.enqueue(new Callback<Coupon>() {
+                    @Override
+                    public void onResponse(Call<Coupon> call, Response<Coupon> response) {
+
+                        if(response.isSuccessful()){
+                            MailAPI mailApi = retrofitMail.create(MailAPI.class);
+                            Coupon couponResponse = response.body();
+                            Toast.makeText(TargetCustomersActivity.this,couponResponse.getCode()+" ", Toast.LENGTH_SHORT).show();
+
+                            //send coupon mail
+                            CouponMail couponMail = new CouponMail(user_email,name, couponResponse.getCode());
+                            Call<CouponMail> couponResponseMail=mailApi.sendCoupon(couponMail);
+                            couponResponseMail.enqueue(new Callback<CouponMail>() {
+                            @Override
+                            public void onResponse(Call<CouponMail> call, Response<CouponMail> responseMail) {
+                                hideProgress();
+                                if(responseMail.isSuccessful()){
+                                    Log.d(Tag.MY_TAG,"Mail sent successfully "+responseMail.body()+"");
+                                }else{
+                                    Log.d(Tag.MY_TAG, "mail sending failed "+responseMail.code());
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<CouponMail> call, Throwable t) {
+                                hideProgress();
+                                Log.d(Tag.MY_TAG, "Mail sending failed. Message: " +t.getMessage()+"Local msg: "+
+                                        t.getLocalizedMessage()+"Ccause: "+t.getCause());
+                            }
+                        });
+                            Toast.makeText(TargetCustomersActivity.this,"Coupon generated s sucessfully.", Toast.LENGTH_SHORT).show();
+                            Log.d(Tag.MY_TAG,"Coupon code success: Body: "+response.body()+"");
+                        }else{
+                            Toast.makeText(TargetCustomersActivity.this,"Please check your network connection.", Toast.LENGTH_SHORT).show();
+                            Log.d(Tag.MY_TAG, "coupon code post failed. Code: "+response.code());
+                        }
                     }
-                }
 
-                @Override
-                public void onFailure(Call<Coupon> call, Throwable t) {
-                    hideProgress();
-                    Toast.makeText(TargetCustomersActivity.this,"Mail couldn't be sent. Check your network connection.", Toast.LENGTH_SHORT).show();
-                    Log.d(Tag.MY_TAG, "coupon code post submitted to API failed. Message: " +t.getMessage()+"Local msg: "+
-                            t.getLocalizedMessage()+"Ccause: "+t.getCause());
-                }
-            });
+                    @Override
+                    public void onFailure(Call<Coupon> call, Throwable t) {
+                        hideProgress();
+                        Toast.makeText(TargetCustomersActivity.this,"Coupon can't be generated. Check your network connection.", Toast.LENGTH_SHORT).show();
+                        Log.d(Tag.MY_TAG, "coupon code post submitted to API failed. Message: " +t.getMessage()+"Local msg: "+
+                                t.getLocalizedMessage()+"Ccause: "+t.getCause());
+                    }
+                });
+            }
         }
-
     }
 
     private void fetchNewCustomers() {
@@ -157,7 +207,8 @@ public class TargetCustomersActivity extends AppCompatActivity {
                 hideProgress();
                 if(response.isSuccessful()) {
                     UserResponse userResponse1=response.body();
-                    ArrayList<User> users=userResponse1.users;
+                    users = new ArrayList<>();
+                    users=userResponse1.users;
                     userArrayList.clear();
                     userArrayList.addAll(users);
                     targetcustomerAdapter.notifyDataSetChanged();
@@ -189,7 +240,8 @@ public class TargetCustomersActivity extends AppCompatActivity {
                 if(response.isSuccessful()) {
                     hideProgress();
                     UserResponse userResponse1=response.body();
-                    ArrayList<User> users=userResponse1.users;
+                    users = new ArrayList<>();
+                    users=userResponse1.users;
                     userArrayList.clear();
                     userArrayList.addAll(users);
                     targetcustomerAdapter.notifyDataSetChanged();
@@ -221,7 +273,8 @@ public class TargetCustomersActivity extends AppCompatActivity {
                 if(response.isSuccessful()) {
                     hideProgress();
                     UserResponse userResponse1=response.body();
-                    ArrayList<User> users=userResponse1.users;
+                    users = new ArrayList<>();
+                    users=userResponse1.users;
                     userArrayList.clear();
                     userArrayList.addAll(users);
                     targetcustomerAdapter.notifyDataSetChanged();
@@ -253,5 +306,15 @@ public class TargetCustomersActivity extends AppCompatActivity {
         targetCustContent.setVisibility(View.VISIBLE);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        userArrayList.clear();
+        if(users!=null){
+            userArrayList.addAll(users);
+        }
 
+        targetCustRecyclerView.setAdapter(targetcustomerAdapter);
+        targetcustomerAdapter.notifyDataSetChanged();
+    }
 }

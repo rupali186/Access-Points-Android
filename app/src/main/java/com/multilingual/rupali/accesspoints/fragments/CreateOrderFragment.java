@@ -3,13 +3,17 @@ package com.multilingual.rupali.accesspoints.fragments;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
+import android.support.v7.view.menu.ActionMenuItemView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -36,13 +40,16 @@ import com.multilingual.rupali.accesspoints.Constants.Tag;
 import com.multilingual.rupali.accesspoints.R;
 import com.multilingual.rupali.accesspoints.adapters.AccessPointsAdapter;
 import com.multilingual.rupali.accesspoints.api.AccessPointAPI;
+import com.multilingual.rupali.accesspoints.api.MailAPI;
 import com.multilingual.rupali.accesspoints.api.CouponApi;
 import com.multilingual.rupali.accesspoints.api.OrderApi;
 import com.multilingual.rupali.accesspoints.config.APIClient;
+import com.multilingual.rupali.accesspoints.config.APIClientMail;
 import com.multilingual.rupali.accesspoints.config.APIClientAccessPts;
 import com.multilingual.rupali.accesspoints.models.AccessPointAddress;
 import com.multilingual.rupali.accesspoints.models.AcessPointDetail;
 import com.multilingual.rupali.accesspoints.models.Address;
+import com.multilingual.rupali.accesspoints.models.Coupon;
 import com.multilingual.rupali.accesspoints.models.Coupon;
 import com.multilingual.rupali.accesspoints.models.EditCoupon;
 import com.multilingual.rupali.accesspoints.models.Order;
@@ -66,6 +73,8 @@ import static com.multilingual.rupali.accesspoints.Constants.Tag.MY_TAG;
  * A simple {@link Fragment} subclass.
  */
 public class CreateOrderFragment extends Fragment {
+    String hno;
+    String street, state, country, city, uname, landmark, pin, contactNo;
     EditText lengthET;
     EditText widthET;
     EditText heightET;
@@ -87,18 +96,22 @@ public class CreateOrderFragment extends Fragment {
     AccessPointsAdapter adapter;
     Retrofit retrofit, retrofit2;
     String delMode,paymentStatus,oDate,delDate;
-    String userEmail;
-    String hno;
-    String street, state, country, city, uname, landmark, pin, contactNo;
-    String range;
-    Address address;
     Size size;
+    String userEmail;
     Integer price,categoryId,productId,weight;
     SharedPreferences sharedPreferences;
+    Retrofit  retrofitMail;
     ProgressListener mCallback;
+    String range;
+    Address address;
     AcessPointDetail accessPointDetail;
+    TextView toolbarTextView;
+    ProgressBar progressBar;
+    ConstraintLayout accessContent;
     ArrayList<AcessPointDetail> accessArrayList;
+    int fetchAccessType= BundleArg.ACCESS_POINTS;
 
+    //for progress dialog
     public interface ProgressListener{
         void showProgress();
         void hideProgress();
@@ -157,6 +170,8 @@ public class CreateOrderFragment extends Fragment {
 
         //retrofit variables
         retrofit= APIClient.getClient();
+        retrofit2= APIClientAccessPts.getClient();
+        retrofitMail = APIClientMail.getClientMail();
         retrofit2= APIClientAccessPts.getClient();
 
         //Listeners
@@ -466,6 +481,25 @@ public class CreateOrderFragment extends Fragment {
                     Order order=response.body();
                     Toast.makeText(getContext(),"Order Created Successfully. ", Toast.LENGTH_SHORT).show();
                     Log.d(Tag.MY_TAG,"Order creted Success: Body: "+response.body()+" id: "+order.get_id());
+                    MailAPI mailApi = retrofitMail.create(MailAPI.class);
+                    Call<Order> mailResponse=mailApi.sendOrderDetail(order);
+                    mailResponse.enqueue(new Callback<Order>() {
+
+                        @Override
+                        public void onResponse(Call<Order> call, Response<Order> response) {
+                            if(response.isSuccessful()){
+                                Log.d(Tag.MY_TAG,"Mail sent successfully "+response.body()+"");
+                            }else{
+                                Log.d(Tag.MY_TAG, "mail sending failed "+response.code());
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Order> call, Throwable t) {
+                            Log.d(Tag.MY_TAG, "Mail sending failed. Message: " +t.getMessage()+"Local msg: "+
+                                    t.getLocalizedMessage()+"Ccause: "+t.getCause());
+                        }
+                    });
                     mCallback.hideProgress();
                     getActivity().onBackPressed();
                 }else{

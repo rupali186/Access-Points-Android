@@ -1,8 +1,11 @@
 package com.multilingual.rupali.accesspoints.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 
-public class User {
+public class User implements Parcelable {
     String _id;
     String email;
     String password;
@@ -18,6 +21,51 @@ public class User {
     ArrayList<Address> address;
     Boolean locker_used;
     boolean isExpanded;
+
+    public User(Parcel in) {
+        super();
+        readFromParcel(in);
+    }
+
+    public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        public User[] newArray(int size) {
+
+            return new User[size];
+        }
+
+    };
+
+    public void readFromParcel(Parcel in) {
+//        String _id = in.readString();
+//        String email = in.readString();
+//        String password = in.readString();;
+//        //ArrayList<Token> tokens;
+//        String u_name = in.readString();;
+//        String acc_creation_date = in.readString();;
+//       // ArrayList<String> phone_no;
+//        String dob = in.readString();;
+//        String gender = in.readString();;
+//        String last_order_date = in.readString();;
+//        int del_failures_no = in.readInt();;
+//        int num_orders = in.readInt();
+//        //ArrayList<Address> address = in.readArray(A);
+//        //Boolean locker_used ;
+//        //boolean isExpanded;
+
+    }
+    public int describeContents() {
+        return 0;
+    }
+
+    public void writeToParcel(Parcel dest, int flags) {
+//       dest.writeString(email);
+//       dest.writeString(u_name);
+       // dest.writeInt();
+    }
 
     public Boolean getExpanded() {
         return isExpanded;
