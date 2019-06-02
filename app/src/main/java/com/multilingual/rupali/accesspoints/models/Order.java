@@ -6,18 +6,18 @@ public class Order {
     String user_id;
     String _id;
     Size size;
-    int price;
+    Double price;
     String o_date;
     String del_date;//
     int category_id;
     int product_id;
-    int weight;
+    Double weight;
     Image image;
     String status;
     String del_mode;
     String payment_status;
     boolean isExpanded;
-   Address address;
+    Address address;
     AcessPointDetail access_pt_address;
 
     public Order() {
@@ -32,7 +32,7 @@ public class Order {
         isExpanded = expanded;
     }
 
-    public Order(Size size, int price,  int category_id, int product_id, String payment_status, String del_date, String del_mode, int weight, Address address) {
+    public Order(Size size, Double price,  int category_id, int product_id, String payment_status, String del_date, String del_mode, Double weight, Address address) {
         this.size = size;
         this.price = price;
         this.del_date = del_date;
@@ -44,7 +44,7 @@ public class Order {
         this.address = address;
     }
 
-    public Order(Size size, int price,  int category_id, int product_id, String payment_status, String del_date, String del_mode, int weight,Address address, AcessPointDetail access_pt_address) {
+    public Order(Size size, Double price,  int category_id, int product_id, String payment_status, String del_date, String del_mode, Double weight,Address address, AcessPointDetail access_pt_address) {
         this.size = size;
         this.price = price;
         this.del_date = del_date;
@@ -82,11 +82,11 @@ public class Order {
         this.size = size;
     }
 
-    public int getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 
@@ -122,11 +122,11 @@ public class Order {
         this.product_id = product_id;
     }
 
-    public int getWeight() {
+    public Double getWeight() {
         return weight;
     }
 
-    public void setWeight(int weight) {
+    public void setWeight(Double weight) {
         this.weight = weight;
     }
 

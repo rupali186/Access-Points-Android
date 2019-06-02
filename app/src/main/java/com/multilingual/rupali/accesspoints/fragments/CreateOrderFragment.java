@@ -63,6 +63,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.multilingual.rupali.accesspoints.Constants.StringConstants.DeliveryMode.ACCESS_PTS;
 import static com.multilingual.rupali.accesspoints.Constants.Tag.MY_TAG;
 
 /**
@@ -95,18 +96,15 @@ public class CreateOrderFragment extends Fragment {
     String delMode,paymentStatus,oDate,delDate;
     Size size;
     String userEmail;
-    Integer price,categoryId,productId,weight,discountOnPrice=0;
+    Integer categoryId,productId;
+    Double price,weight,discountOnPrice=0.0;
     SharedPreferences sharedPreferences;
     Retrofit  retrofitMail;
     ProgressListener mCallback;
     String range;
     Address address;
     AcessPointDetail accessPointDetail;
-    TextView toolbarTextView;
-    ProgressBar progressBar;
-    ConstraintLayout accessContent;
     ArrayList<AcessPointDetail> accessArrayList;
-    int fetchAccessType= BundleArg.ACCESS_POINTS;
     boolean couponUsed=false;
 
     //for progress dialog
@@ -170,7 +168,6 @@ public class CreateOrderFragment extends Fragment {
         retrofit= APIClient.getClient();
         retrofit2= APIClientAccessPts.getClient();
         retrofitMail = APIClientMail.getClientMail();
-        retrofit2= APIClientAccessPts.getClient();
 
         //Listeners
         createOrderButton.setOnClickListener(new View.OnClickListener() {
@@ -287,10 +284,14 @@ public class CreateOrderFragment extends Fragment {
         if(!fetchData()){
             return;
         }
-        if(!couponUsed) {
+        if(!couponUsed&&delMode.equalsIgnoreCase(ACCESS_PTS)) {
             fetchDiscount();
         }else{
-           Toast.makeText(getContext(),"You have already used a promo code on this order. Long click to remove the promo code.",Toast.LENGTH_SHORT).show();
+            if(!delMode.equalsIgnoreCase(ACCESS_PTS)){
+                Toast.makeText(getContext(),"delivery mode should be access points to apply promo code." ,Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(getContext(),"You have already used a promo code on this order. Long click to remove the promo code.",Toast.LENGTH_SHORT).show();
+            }
         }
 
     }
@@ -312,16 +313,17 @@ public class CreateOrderFragment extends Fragment {
                         Date expiryDate = dateFormat.parse(formattedExpiryDate);
                         if(currentDate.after(expiryDate)){
                             Toast.makeText(getContext(),"Your Coupon has been expired",Toast.LENGTH_SHORT).show();
+                        }else if(coupon.getUsed()){
+                            Toast.makeText(getContext(),"This Coupon code has already been used",Toast.LENGTH_SHORT).show();
+
                         }else{
-                            discountOnPrice=(price*discount)/100;
+                            discountOnPrice=(price*discount*1.0)/100;
                             price-=discountOnPrice;
                             priceET.setText(price+"");
                             applyPromoCodeButton.setText("You got a discount of "+discount+"% on this order. Final Amount to be paid: "+price);
                             couponUsed=true;
                             couponID = coupon.get_id();
                             applyPromoCodeButton.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
-                            Toast.makeText(getContext(),"\"You got a discount of \"+discount+\"% on this order. Final Amount to be paid: \"+price",Toast.LENGTH_SHORT).show();
-
                         }
                     } catch (ParseException e) {
                         e.printStackTrace();
@@ -354,7 +356,7 @@ public class CreateOrderFragment extends Fragment {
             @Override
             public void onResponse(Call<CouponResponse> call, Response<CouponResponse> response) {
                 if(response.isSuccessful()){
-
+                    Log.d(MY_TAG,"Update coupon api sucess");
                 }else{
                     Toast.makeText(getContext(), " check your network connection.",Toast.LENGTH_SHORT).show();
                     Log.d(MY_TAG,"Update coupon api failed");
@@ -599,9 +601,9 @@ public class CreateOrderFragment extends Fragment {
             size.setLength(Integer.parseInt(lengthET.getText().toString()));
             size.setWidth(Integer.parseInt(widthET.getText().toString()));
             size.setHeight(Integer.parseInt(heightET.getText().toString()));
-            price=Integer.parseInt(priceET.getText().toString());
+            price=Double.parseDouble(priceET.getText().toString());
             productId=Integer.parseInt(productIdSpinner.getSelectedItem().toString());
-            weight=Integer.parseInt(weightET.getText().toString());
+            weight=Double.parseDouble(weightET.getText().toString());
         }catch (NumberFormatException e){
             Log.w(MY_TAG, "entered value isn't Integer");
         }
@@ -631,12 +633,12 @@ public class CreateOrderFragment extends Fragment {
             return  false;
         }
         if(paymentStatus.equals(StringConstants.PaymentStatus.UNPAID)&&(delMode.equals(StringConstants.DeliveryMode.STORE_DEL)||
-                delMode.equals(StringConstants.DeliveryMode.ACCESS_PTS))){
+                delMode.equals(ACCESS_PTS))){
             Toast.makeText(getContext(),"Payment status should be paid for store delivery and access points." +
                     "!!",Toast.LENGTH_SHORT).show();
             return  false;
         }
-        if(delMode.equals(StringConstants.DeliveryMode.ACCESS_PTS) && accessPointDetail.getAddress() == null ){
+        if(delMode.equals(ACCESS_PTS) && accessPointDetail.getAddress() == null ){
             Toast.makeText(getContext(),"Choose an access point" +
                     "!!",Toast.LENGTH_SHORT).show();
             return  false;
