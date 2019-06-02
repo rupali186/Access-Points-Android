@@ -69,6 +69,7 @@ import static com.multilingual.rupali.accesspoints.Constants.Tag.MY_TAG;
  * A simple {@link Fragment} subclass.
  */
 public class CreateOrderFragment extends Fragment {
+    String couponID=null;
     String hno;
     String street, state, country, city, uname, landmark, pin, contactNo;
     EditText lengthET;
@@ -317,6 +318,7 @@ public class CreateOrderFragment extends Fragment {
                             priceET.setText(price+"");
                             applyPromoCodeButton.setText("You got a discount of "+discount+"% on this order. Final Amount to be paid: "+price);
                             couponUsed=true;
+                            couponID = coupon.get_id();
                             applyPromoCodeButton.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
                             Toast.makeText(getContext(),"\"You got a discount of \"+discount+\"% on this order. Final Amount to be paid: \"+price",Toast.LENGTH_SHORT).show();
 
@@ -335,11 +337,9 @@ public class CreateOrderFragment extends Fragment {
 
                 }
             }
-
             @Override
             public void onFailure(Call<CouponResponse> call, Throwable t) {
-                Toast.makeText(getContext(),"Make sure you entered an unused coupon code or check " +
-                        "your network connection.",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), " check your network connection.",Toast.LENGTH_SHORT).show();
                 Log.d(MY_TAG,"Search coupon api failed"+t.getMessage());
             }
         });
@@ -356,13 +356,15 @@ public class CreateOrderFragment extends Fragment {
                 if(response.isSuccessful()){
 
                 }else{
-
+                    Toast.makeText(getContext(), " check your network connection.",Toast.LENGTH_SHORT).show();
+                    Log.d(MY_TAG,"Update coupon api failed");
                 }
             }
 
             @Override
             public void onFailure(Call<CouponResponse> call, Throwable t) {
-
+                Toast.makeText(getContext(), " check your network connection.",Toast.LENGTH_SHORT).show();
+                Log.d(MY_TAG,"Update coupon api failed"+t.getMessage());
             }
         });
 
@@ -543,6 +545,10 @@ public class CreateOrderFragment extends Fragment {
             @Override
             public void onResponse(Call<Order> call, Response<Order> response) {
                 if(response.isSuccessful()) {
+                    if(couponUsed){
+                        updateCouponCode(couponID);
+                    }
+
                     Order order=response.body();
                     Toast.makeText(getContext(),"Order Created Successfully. ", Toast.LENGTH_SHORT).show();
                     Log.d(Tag.MY_TAG,"Order creted Success: Body: "+response.body()+" id: "+order.get_id());
