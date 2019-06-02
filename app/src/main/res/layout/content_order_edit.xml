@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:id="@+id/content_order_edit"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".Activities.OrderEditActivity"
+    tools:context=".activities.OrderEditActivity"
     tools:showIn="@layout/activity_order_edit">
 
     <Spinner

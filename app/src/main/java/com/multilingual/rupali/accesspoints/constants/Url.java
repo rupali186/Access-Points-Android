@@ -1,4 +1,4 @@
-package com.multilingual.rupali.accesspoints.Constants;
+package com.multilingual.rupali.accesspoints.constants;
 
 public class Url {
     public Url() {

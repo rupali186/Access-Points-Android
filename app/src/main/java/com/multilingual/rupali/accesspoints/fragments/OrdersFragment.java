@@ -17,21 +17,16 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.multilingual.rupali.accesspoints.Activities.OrderEditActivity;
-import com.multilingual.rupali.accesspoints.Activities.TargetCustomersActivity;
-import com.multilingual.rupali.accesspoints.Constants.BundleArg;
-import com.multilingual.rupali.accesspoints.Constants.LoginSharedPref;
-import com.multilingual.rupali.accesspoints.Constants.Tag;
+import com.multilingual.rupali.accesspoints.activities.OrderEditActivity;
+import com.multilingual.rupali.accesspoints.constants.BundleArg;
+import com.multilingual.rupali.accesspoints.constants.LoginSharedPref;
+import com.multilingual.rupali.accesspoints.constants.Tag;
 import com.multilingual.rupali.accesspoints.R;
 import com.multilingual.rupali.accesspoints.adapters.OrderRecyclerAdapter;
-import com.multilingual.rupali.accesspoints.adapters.TargetcustomerAdapter;
 import com.multilingual.rupali.accesspoints.api.OrderApi;
-import com.multilingual.rupali.accesspoints.api.UserApi;
 import com.multilingual.rupali.accesspoints.config.APIClient;
 import com.multilingual.rupali.accesspoints.models.Order;
-import com.multilingual.rupali.accesspoints.models.User;
 import com.multilingual.rupali.accesspoints.response.OrderResponse;
-import com.multilingual.rupali.accesspoints.response.UserResponse;
 
 import java.util.ArrayList;
 

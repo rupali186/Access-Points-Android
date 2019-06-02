@@ -9,11 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.multilingual.rupali.accesspoints.Constants.Tag;
+import com.multilingual.rupali.accesspoints.constants.Tag;
 import com.multilingual.rupali.accesspoints.R;
-import com.multilingual.rupali.accesspoints.models.Address;
 import com.multilingual.rupali.accesspoints.models.Order;
-import com.multilingual.rupali.accesspoints.models.User;
 
 import java.util.ArrayList;
 

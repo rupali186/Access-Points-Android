@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,15 +22,13 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.multilingual.rupali.accesspoints.Constants.BundleArg;
-import com.multilingual.rupali.accesspoints.Constants.LoginSharedPref;
-import com.multilingual.rupali.accesspoints.Constants.StringConstants;
-import com.multilingual.rupali.accesspoints.Constants.Tag;
+import com.multilingual.rupali.accesspoints.constants.LoginSharedPref;
+import com.multilingual.rupali.accesspoints.constants.StringConstants;
+import com.multilingual.rupali.accesspoints.constants.Tag;
 import com.multilingual.rupali.accesspoints.R;
 import com.multilingual.rupali.accesspoints.adapters.AccessPointsAdapter;
 import com.multilingual.rupali.accesspoints.api.AccessPointAPI;
@@ -63,8 +60,8 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 import static android.content.Context.MODE_PRIVATE;
-import static com.multilingual.rupali.accesspoints.Constants.StringConstants.DeliveryMode.ACCESS_PTS;
-import static com.multilingual.rupali.accesspoints.Constants.Tag.MY_TAG;
+import static com.multilingual.rupali.accesspoints.constants.StringConstants.DeliveryMode.ACCESS_PTS;
+import static com.multilingual.rupali.accesspoints.constants.Tag.MY_TAG;
 
 /**
  * A simple {@link Fragment} subclass.

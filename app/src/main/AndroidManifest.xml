@@ -11,21 +11,30 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activities.CouponMailActivity"></activity>
+        <service
+            android:name=".notification.NotificationService"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <activity android:name=".activities.CouponMailActivity" />
         <activity
-            android:name=".Activities.OrderEditActivity"
+            android:name=".activities.OrderEditActivity"
             android:label="@string/title_activity_order_edit"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Activities.TargetCustomersActivity"
+            android:name=".activities.TargetCustomersActivity"
             android:label="@string/title_activity_target_customers"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Activities.AccountActivity"
+            android:name=".activities.AccountActivity"
             android:label="@string/title_activity_account"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Activities.HomeActivity"
+            android:name=".activities.HomeActivity"
             android:label="@string/title_activity_home"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -34,6 +43,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="@string/default_notification_channel_id" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/amazon_circle_icon" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorAccent" />
     </application>
+
 
 </manifest>

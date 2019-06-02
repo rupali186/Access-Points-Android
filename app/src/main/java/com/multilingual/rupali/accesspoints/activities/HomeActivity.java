@@ -1,4 +1,4 @@
-package com.multilingual.rupali.accesspoints.Activities;
+package com.multilingual.rupali.accesspoints.activities;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -7,8 +7,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -27,9 +26,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.multilingual.rupali.accesspoints.Constants.BundleArg;
-import com.multilingual.rupali.accesspoints.Constants.LoginSharedPref;
-import com.multilingual.rupali.accesspoints.Constants.Tag;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+import com.multilingual.rupali.accesspoints.constants.BundleArg;
+import com.multilingual.rupali.accesspoints.constants.LoginSharedPref;
+import com.multilingual.rupali.accesspoints.constants.Tag;
 import com.multilingual.rupali.accesspoints.R;
 import com.multilingual.rupali.accesspoints.api.UserApi;
 import com.multilingual.rupali.accesspoints.config.APIClient;
@@ -39,16 +42,15 @@ import com.multilingual.rupali.accesspoints.fragments.CreateOrderFragment;
 import com.multilingual.rupali.accesspoints.fragments.EditAccountDetailsFragment;
 import com.multilingual.rupali.accesspoints.fragments.HomeFragment;
 import com.multilingual.rupali.accesspoints.fragments.OrdersFragment;
-import com.multilingual.rupali.accesspoints.models.Address;
 import com.multilingual.rupali.accesspoints.models.User;
-
-import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+
+import static com.multilingual.rupali.accesspoints.constants.Tag.MY_TAG;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, CreateOrderFragment.ProgressListener,EditAccountDetailsFragment.ProgressListener, OrdersFragment.ProgressListener {
@@ -58,6 +60,7 @@ public class HomeActivity extends AppCompatActivity
     SharedPreferences sharedPreferences;
     Boolean loggedIn;
     String email;
+    String token="";
     Retrofit retrofit;
     ProgressBar progressBar;
     LinearLayout contentHome;
@@ -97,6 +100,23 @@ public class HomeActivity extends AppCompatActivity
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.container_main,homeFragment,"HOME").commit();
+        retreiveCurrentRegToken();
+    }
+
+    private void retreiveCurrentRegToken() {
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            Log.d(MY_TAG, "getInstanceId failed", task.getException());
+                            return;
+                        }
+                        // Get new Instance ID token
+                        token = task.getResult().getToken();
+                        Log.d(MY_TAG, "REG Token: "+token);
+                    }
+                });
     }
 
     @Override
@@ -149,17 +169,17 @@ public class HomeActivity extends AppCompatActivity
                     editor.commit();
                     populateDataFromSharedPreferences();
                     Toast.makeText(HomeActivity.this,"Logged Out Successfully.", Toast.LENGTH_SHORT).show();
-                    Log.d(Tag.MY_TAG,"Log out success: Body: "+response.body()+"");
+                    Log.d(MY_TAG,"Log out success: Body: "+response.body()+"");
                 }else{
                     Toast.makeText(HomeActivity.this,"Please check your network connection or the User does not Exist.", Toast.LENGTH_SHORT).show();
-                    Log.d(Tag.MY_TAG, "log out post submitted to API failed.");
+                    Log.d(MY_TAG, "log out post submitted to API failed.");
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 Toast.makeText(HomeActivity.this,"Please check your network connection or the User does not Exist.", Toast.LENGTH_SHORT).show();
-                Log.d(Tag.MY_TAG, "Failure: log out post submitted to API failed."+t.getMessage());
+                Log.d(MY_TAG, "Failure: log out post submitted to API failed."+t.getMessage());
             }
         });
 
@@ -316,12 +336,12 @@ public class HomeActivity extends AppCompatActivity
                     editor.commit();
                     populateDataFromSharedPreferences();
                     Toast.makeText(HomeActivity.this,"User Deleted Successfully.", Toast.LENGTH_SHORT).show();
-                    Log.d(Tag.MY_TAG,"User delete Success: Body: "+response.body()+" code: "+response.code());
+                    Log.d(MY_TAG,"User delete Success: Body: "+response.body()+" code: "+response.code());
                     hideProgress();
                 }else{
                     hideProgress();
                     Toast.makeText(HomeActivity.this,"Please check your network connection.", Toast.LENGTH_SHORT).show();
-                    Log.d(Tag.MY_TAG, "delete post submitted to API failed."+response.body()+" code: "+response.code());
+                    Log.d(MY_TAG, "delete post submitted to API failed."+response.body()+" code: "+response.code());
                 }
             }
 
@@ -329,7 +349,7 @@ public class HomeActivity extends AppCompatActivity
             public void onFailure(Call<User> call, Throwable t) {
                 hideProgress();
                 Toast.makeText(HomeActivity.this,"Please check your network connection.", Toast.LENGTH_SHORT).show();
-                Log.d(Tag.MY_TAG, "delete post submitted to API failed." +t.getMessage());
+                Log.d(MY_TAG, "delete post submitted to API failed." +t.getMessage());
             }
 
         });

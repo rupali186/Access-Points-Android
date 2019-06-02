@@ -1,4 +1,4 @@
-package com.multilingual.rupali.accesspoints.Activities;
+package com.multilingual.rupali.accesspoints.activities;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
@@ -11,22 +11,18 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.multilingual.rupali.accesspoints.Constants.BundleArg;
-import com.multilingual.rupali.accesspoints.Constants.Tag;
+import com.multilingual.rupali.accesspoints.constants.BundleArg;
 import com.multilingual.rupali.accesspoints.R;
-import com.multilingual.rupali.accesspoints.models.Coupon;
-import com.multilingual.rupali.accesspoints.models.CouponMail;
 import com.multilingual.rupali.accesspoints.models.User;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 
 
-import static com.multilingual.rupali.accesspoints.Constants.Tag.MY_TAG;
+import static com.multilingual.rupali.accesspoints.constants.Tag.MY_TAG;
 
 public class CouponMailActivity extends AppCompatActivity {
     ImageView expDateIV;

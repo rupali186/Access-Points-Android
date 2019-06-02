@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,12 +15,11 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.multilingual.rupali.accesspoints.Activities.TargetCustomersActivity;
-import com.multilingual.rupali.accesspoints.Constants.BundleArg;
-import com.multilingual.rupali.accesspoints.Constants.LoginSharedPref;
+import com.multilingual.rupali.accesspoints.activities.TargetCustomersActivity;
+import com.multilingual.rupali.accesspoints.constants.BundleArg;
 import com.multilingual.rupali.accesspoints.R;
 
-import static com.multilingual.rupali.accesspoints.Constants.Tag.MY_TAG;
+import static com.multilingual.rupali.accesspoints.constants.Tag.MY_TAG;
 
 /**
  * A simple {@link Fragment} subclass.

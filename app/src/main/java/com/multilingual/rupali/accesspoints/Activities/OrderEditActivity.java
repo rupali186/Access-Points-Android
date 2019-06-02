@@ -1,11 +1,9 @@
-package com.multilingual.rupali.accesspoints.Activities;
+package com.multilingual.rupali.accesspoints.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -17,19 +15,14 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.multilingual.rupali.accesspoints.Constants.BundleArg;
-import com.multilingual.rupali.accesspoints.Constants.LoginSharedPref;
-import com.multilingual.rupali.accesspoints.Constants.Tag;
+import com.multilingual.rupali.accesspoints.constants.BundleArg;
+import com.multilingual.rupali.accesspoints.constants.LoginSharedPref;
+import com.multilingual.rupali.accesspoints.constants.Tag;
 import com.multilingual.rupali.accesspoints.R;
 import com.multilingual.rupali.accesspoints.api.OrderApi;
-import com.multilingual.rupali.accesspoints.api.UserApi;
 import com.multilingual.rupali.accesspoints.config.APIClient;
 import com.multilingual.rupali.accesspoints.models.EditOrder;
 import com.multilingual.rupali.accesspoints.models.Order;
-import com.multilingual.rupali.accesspoints.models.User;
-import com.multilingual.rupali.accesspoints.response.UserResponse;
-
-import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;

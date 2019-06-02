@@ -1,6 +1,6 @@
 package com.multilingual.rupali.accesspoints.config;
 
-import com.multilingual.rupali.accesspoints.Constants.Url;
+import com.multilingual.rupali.accesspoints.constants.Url;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

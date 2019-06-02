@@ -2,20 +2,15 @@ package com.multilingual.rupali.accesspoints.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v4.widget.ImageViewCompat;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.multilingual.rupali.accesspoints.Constants.Tag;
 import com.multilingual.rupali.accesspoints.R;
-import com.multilingual.rupali.accesspoints.models.AccessPointAddress;
 import com.multilingual.rupali.accesspoints.models.AcessPointDetail;
-import com.multilingual.rupali.accesspoints.models.Order;
 
 import java.util.ArrayList;
 

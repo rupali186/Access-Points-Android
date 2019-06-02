@@ -1,4 +1,4 @@
-package com.multilingual.rupali.accesspoints.Activities;
+package com.multilingual.rupali.accesspoints.activities;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -16,8 +16,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.multilingual.rupali.accesspoints.Constants.BundleArg;
-import com.multilingual.rupali.accesspoints.Constants.Tag;
+import com.multilingual.rupali.accesspoints.constants.BundleArg;
+import com.multilingual.rupali.accesspoints.constants.Tag;
 import com.multilingual.rupali.accesspoints.R;
 import com.multilingual.rupali.accesspoints.adapters.TargetcustomerAdapter;
 import com.multilingual.rupali.accesspoints.api.CouponApi;

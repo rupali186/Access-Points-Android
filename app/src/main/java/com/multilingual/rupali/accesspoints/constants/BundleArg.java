@@ -1,4 +1,4 @@
-package com.multilingual.rupali.accesspoints.Constants;
+package com.multilingual.rupali.accesspoints.constants;
 
 public class BundleArg {
     public  static final String THRESHOLD="threshold";

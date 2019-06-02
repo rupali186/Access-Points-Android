@@ -1,4 +1,4 @@
-package com.multilingual.rupali.accesspoints.Constants;
+package com.multilingual.rupali.accesspoints.constants;
 
 public class LoginSharedPref {
     public  static final String SHARED_PREF_NAME="LoginSharedPref";

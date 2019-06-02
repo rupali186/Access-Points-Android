@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:id="@+id/content_target_cust"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".Activities.TargetCustomersActivity"
+    tools:context=".activities.TargetCustomersActivity"
     tools:showIn="@layout/activity_target_customers">
 
     <android.support.v7.widget.RecyclerView

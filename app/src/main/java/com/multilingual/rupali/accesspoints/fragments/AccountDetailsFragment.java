@@ -8,7 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import com.multilingual.rupali.accesspoints.Constants.LoginSharedPref;
+import com.multilingual.rupali.accesspoints.constants.LoginSharedPref;
 import com.multilingual.rupali.accesspoints.R;
 import static android.content.Context.MODE_PRIVATE;
 
