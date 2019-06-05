@@ -16,6 +16,7 @@ public class User implements Parcelable {
     String dob;
     String gender;
     String last_order_date;
+    String last_coupon_date;
     int del_failures_no;
     int num_orders;
     ArrayList<Address> address;
@@ -94,6 +95,14 @@ public class User implements Parcelable {
         this.gender = gender;
         this.address = address;
         this.isExpanded=false;
+    }
+
+    public String getLast_coupon_date() {
+        return last_coupon_date;
+    }
+
+    public void setLast_coupon_date(String last_coupon_date) {
+        this.last_coupon_date = last_coupon_date;
     }
 
     public String get_id() {

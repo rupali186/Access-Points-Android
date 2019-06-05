@@ -103,24 +103,24 @@ public class HomeActivity extends AppCompatActivity
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.container_main,homeFragment,"HOME").commit();
-        retreiveCurrentDeviceToken();
+//        retreiveCurrentDeviceToken();
     }
 
-    private void retreiveCurrentDeviceToken() {
-        FirebaseInstanceId.getInstance().getInstanceId()
-                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                        if (!task.isSuccessful()) {
-                            Log.d(MY_TAG, "getInstanceId failed", task.getException());
-                            return;
-                        }
-                        // Get new Instance ID token
-                        notiToken = task.getResult().getToken();
-                        Log.d(MY_TAG, "REG Token: "+notiToken);
-                    }
-                });
-    }
+//    private void retreiveCurrentDeviceToken() {
+//        FirebaseInstanceId.getInstance().getInstanceId()
+//                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+//                        if (!task.isSuccessful()) {
+//                            Log.d(MY_TAG, "getInstanceId failed", task.getException());
+//                            return;
+//                        }
+//                        // Get new Instance ID token
+//                        notiToken = task.getResult().getToken();
+//                        Log.d(MY_TAG, "REG Token: "+notiToken);
+//                    }
+//                });
+//    }
 
     @Override
     protected void onResume() {

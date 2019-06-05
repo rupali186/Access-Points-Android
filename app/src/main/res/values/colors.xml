@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#95ba6a</color>
-    <color name="colorPrimaryDark">#63843f</color>
-    <color name="colorAccent">#7a9e54</color>
+    <color name="colorPrimary">#232F3E</color>
+    <color name="colorPrimaryDark">#131A22</color>
+    <color name="colorAccent">#37475A</color>
+    <!--<color name="colorPrimary">#95ba6a</color>-->
+    <!--<color name="colorPrimaryDark">#63843f</color>-->
+    <!--<color name="colorAccent">#7a9e54</color>-->
     <color name="goldrod">#DAA520</color>
     <color name="brown">#795548</color>
     <color name="roseGray">#607D8B</color>
@@ -13,7 +16,7 @@
     <color name="login">#880E4F</color>
     <color name="facebook">#3b5998 </color>
     <color name="google">#DD4B39</color>
-    <color name="submit_button">#50a730</color>
+    <color name="submit_button">#37475A</color>
     <color name="promo_code_color">#FFC107</color>
     <color name="chevron_color">#63843f</color>
     <color name="check_bg">#4550a730</color>
@@ -21,7 +24,7 @@
     <color name="link">#0647f9</color>
     <color name="blueAccent">#078ded</color>
     <color name="icon_colour">#d50700</color>
-    <color name="colorPrimaryAlpha">#22d50000</color>
+    <color name="colorPrimaryAlpha">#22232F3E</color>
     <color name="black">#000000</color>
     <color name="white">#ffffff</color>
 
