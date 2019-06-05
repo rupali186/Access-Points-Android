@@ -142,12 +142,20 @@ public class OrdersFragment extends Fragment {
                     orderArrayList.clear();
                     orderArrayList.addAll(orders);
                     orderRecyclerAdapter.notifyDataSetChanged();
-                    Toast.makeText(getContext(),"Fetched sucessfully.", Toast.LENGTH_SHORT).show();
+                    try {
+                        Toast.makeText(getContext(), "Fetched sucessfully.", Toast.LENGTH_SHORT).show();
+                    }catch (Exception e){
+                        Log.d(Tag.MY_TAG,"get context() exception in fetchAllOrders");
+                    }
                     Log.d(Tag.MY_TAG,"All Orders success: Body: "+response.body()+"");
                     mCallback.hideProgress();
                 }else{
                     mCallback.hideProgress();
-                    Toast.makeText(getContext(),"Please check your network connection.", Toast.LENGTH_SHORT).show();
+                    try {
+                        Toast.makeText(getContext(), "Please check your network connection.", Toast.LENGTH_SHORT).show();
+                    }catch (Exception e){
+                        Log.d(Tag.MY_TAG,"get context() exception in fetchAllOrders");
+                    }
                     Log.d(Tag.MY_TAG, "all orders fetch failed. Code: "+response.code());
                 }
             }
@@ -155,7 +163,11 @@ public class OrdersFragment extends Fragment {
             @Override
             public void onFailure(Call<OrderResponse> call, Throwable t) {
                 mCallback.hideProgress();
-                Toast.makeText(getContext(),"Please check your network connection.", Toast.LENGTH_SHORT).show();
+                try {
+                    Toast.makeText(getContext(), "Please check your network connection.", Toast.LENGTH_SHORT).show();
+                }catch (Exception e){
+                    Log.d(Tag.MY_TAG,"get context() exception in fetchAllOrders");
+                }
                 Log.d(Tag.MY_TAG, "all orders get request submitted to API failed. Message: " +t.getMessage()+"Local msg: "+
                         t.getLocalizedMessage()+"Ccause: "+t.getCause());           }
         });
@@ -176,11 +188,19 @@ public class OrdersFragment extends Fragment {
                    orderArrayList.clear();
                    orderArrayList.addAll(orders);
                    orderRecyclerAdapter.notifyDataSetChanged();
-                   Toast.makeText(getContext(),"Fetched sucessfully.", Toast.LENGTH_SHORT).show();
+                   try {
+                       Toast.makeText(getContext(), "Fetched sucessfully.", Toast.LENGTH_SHORT).show();
+                   }catch (Exception e){
+                       Log.d(Tag.MY_TAG,"get context() exception in fetchMyOrders");
+                   }
                    Log.d(Tag.MY_TAG,"My Orders success: Body: "+response.body()+"");
                }else{
                    mCallback.hideProgress();
-                   Toast.makeText(getContext(),"Please check your network connection.", Toast.LENGTH_SHORT).show();
+                   try {
+                       Toast.makeText(getContext(), "Please check your network connection.", Toast.LENGTH_SHORT).show();
+                   }catch (Exception e){
+                       Log.d(Tag.MY_TAG,"get context() exception in fetchMyOrders");
+                   }
                    Log.d(Tag.MY_TAG, "my orders fetch failed. Code: "+response.code());
                }
            }
@@ -188,7 +208,11 @@ public class OrdersFragment extends Fragment {
            @Override
            public void onFailure(Call<OrderResponse> call, Throwable t) {
                mCallback.hideProgress();
-               Toast.makeText(getContext(),"Please check your network connection.", Toast.LENGTH_SHORT).show();
+               try {
+                   Toast.makeText(getContext(), "Please check your network connection.", Toast.LENGTH_SHORT).show();
+               }catch (Exception e){
+                   Log.d(Tag.MY_TAG,"get context() exception in fetchMyOrders");
+               }
                Log.d(Tag.MY_TAG, "my orders get request submitted to API failed. Message: " +t.getMessage()+"Local msg: "+
                        t.getLocalizedMessage()+"Ccause: "+t.getCause());           }
        });

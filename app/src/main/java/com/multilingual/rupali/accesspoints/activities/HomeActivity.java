@@ -43,6 +43,9 @@ import com.multilingual.rupali.accesspoints.fragments.EditAccountDetailsFragment
 import com.multilingual.rupali.accesspoints.fragments.HomeFragment;
 import com.multilingual.rupali.accesspoints.fragments.OrdersFragment;
 import com.multilingual.rupali.accesspoints.models.User;
+import com.multilingual.rupali.accesspoints.response.UserResponse;
+
+import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
@@ -60,7 +63,7 @@ public class HomeActivity extends AppCompatActivity
     SharedPreferences sharedPreferences;
     Boolean loggedIn;
     String email;
-    String token="";
+    String notiToken="";
     Retrofit retrofit;
     ProgressBar progressBar;
     LinearLayout contentHome;
@@ -100,10 +103,10 @@ public class HomeActivity extends AppCompatActivity
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.container_main,homeFragment,"HOME").commit();
-        retreiveCurrentRegToken();
+        retreiveCurrentDeviceToken();
     }
 
-    private void retreiveCurrentRegToken() {
+    private void retreiveCurrentDeviceToken() {
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
                     @Override
@@ -113,8 +116,8 @@ public class HomeActivity extends AppCompatActivity
                             return;
                         }
                         // Get new Instance ID token
-                        token = task.getResult().getToken();
-                        Log.d(MY_TAG, "REG Token: "+token);
+                        notiToken = task.getResult().getToken();
+                        Log.d(MY_TAG, "REG Token: "+notiToken);
                     }
                 });
     }
@@ -164,9 +167,7 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if(response.isSuccessful()) {
-                    SharedPreferences.Editor editor=sharedPreferences.edit();
-                    editor.clear();
-                    editor.commit();
+                    deleteUserFromSharedPref();
                     populateDataFromSharedPreferences();
                     Toast.makeText(HomeActivity.this,"Logged Out Successfully.", Toast.LENGTH_SHORT).show();
                     Log.d(MY_TAG,"Log out success: Body: "+response.body()+"");
@@ -188,15 +189,60 @@ public class HomeActivity extends AppCompatActivity
     private void populateDataFromSharedPreferences() {
         loggedIn=sharedPreferences.getBoolean(LoginSharedPref.LOGGED_IN,false);
         if(loggedIn){
-            email=sharedPreferences.getString(LoginSharedPref.USER_EMAIL,"");
-           String x_auth =sharedPreferences.getString(LoginSharedPref.USER_TOKEN,"");
-            Log.d("xAuth",x_auth);
-            nameTextView.setText(email);
-            logInOrSignUp.setText("Logout");
+            fetchCurrentUser();
+
         }else{
-            nameTextView.setText("Welcome!");
-            logInOrSignUp.setText("Log In Or Sign Up");
+            setLoggedOutUI();
         }
+    }
+
+    private void fetchCurrentUser() {
+        showProgress();
+        UserApi userApi=retrofit.create(UserApi.class);
+        String x_auth =sharedPreferences.getString(LoginSharedPref.USER_TOKEN,"");
+        Log.d("xAuth",x_auth);
+        Call<User> userCall=userApi.getCurrentUser(x_auth);
+        userCall.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                hideProgress();
+                if(response.isSuccessful()) {
+                    setLoggedInUI();
+                    Log.d(Tag.MY_TAG,"Users/me success: Body: "+response.body()+"");
+                }else{
+                    setLoggedOutUI();
+                    deleteUserFromSharedPref();
+                    Log.d(Tag.MY_TAG, "Users/me fetch failed. Code: "+response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                hideProgress();
+//                deleteUserFromSharedPref();
+//                setLoggedOutUI();
+                Toast.makeText(HomeActivity.this,"Please check your network connection. Cannot fetch current user",Toast.LENGTH_SHORT ).show();
+                Log.d(Tag.MY_TAG, "get Users/me post submitted to API failed. Message: " +t.getMessage()+"Local msg: "+
+                        t.getLocalizedMessage()+"Ccause: "+t.getCause());
+            }
+        });
+    }
+
+    private void deleteUserFromSharedPref() {
+        SharedPreferences.Editor editor=sharedPreferences.edit();
+        editor.clear();
+        editor.commit();
+    }
+
+    private void setLoggedInUI() {
+        email=sharedPreferences.getString(LoginSharedPref.USER_EMAIL,"");
+        nameTextView.setText(email);
+        logInOrSignUp.setText("Logout");
+    }
+
+    private void setLoggedOutUI() {
+        nameTextView.setText("Welcome!");
+        logInOrSignUp.setText("Log In Or Sign Up");
     }
 
     @Override
@@ -205,7 +251,6 @@ public class HomeActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-//            super.onBackPressed();
             if (exit) {
                 super.onBackPressed();
                 return;
@@ -236,9 +281,6 @@ public class HomeActivity extends AppCompatActivity
                 }
             }, 2000);
         }
-//else {
-//            super.onBackPressed();
-//        }
     }
 
     @Override
@@ -331,9 +373,7 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 if(response.isSuccessful()) {
-                    SharedPreferences.Editor editor=sharedPreferences.edit();
-                    editor.clear();
-                    editor.commit();
+                    deleteUserFromSharedPref();
                     populateDataFromSharedPreferences();
                     Toast.makeText(HomeActivity.this,"User Deleted Successfully.", Toast.LENGTH_SHORT).show();
                     Log.d(MY_TAG,"User delete Success: Body: "+response.body()+" code: "+response.code());
@@ -384,29 +424,36 @@ public class HomeActivity extends AppCompatActivity
             toolbarTextView.setText("About Us");
 
         } else if (id == R.id.nav_share) {
-            try {
-                Intent i = new Intent(Intent.ACTION_SEND);
-                i.setType("text/plain");
-                i.putExtra(Intent.EXTRA_SUBJECT, "Access Points");
-                String sAux = "\nAccess points\n";
-                sAux = sAux + "https://play.google.com/store/apps/details?1234=the.AccessPoints.1234 \n\n";
-                i.putExtra(Intent.EXTRA_TEXT, sAux);
-                startActivity(Intent.createChooser(i, "choose one"));
-            } catch(Exception e) {
-                //e.toString();
-            }
+            shareOnClick();
 
         } else if (id == R.id.nav_contact) {
-            Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-                    "mailto","rupalichawla186@gmail.com", null));
-            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Contact: Access Points");
-            startActivity(Intent.createChooser(emailIntent, "Send email..."));
-
-
+            contactOnClick();
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void contactOnClick() {
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                "mailto","rupalichawla186@gmail.com", null));
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Contact: Access Points");
+        startActivity(Intent.createChooser(emailIntent, "Send email..."));
+
+    }
+
+    private void shareOnClick() {
+        try {
+            Intent i = new Intent(Intent.ACTION_SEND);
+            i.setType("text/plain");
+            i.putExtra(Intent.EXTRA_SUBJECT, "Access Points");
+            String sAux = "\nAccess points\n";
+            sAux = sAux + "https://play.google.com/store/apps/details?1234=the.AccessPoints.1234 \n\n";
+            i.putExtra(Intent.EXTRA_TEXT, sAux);
+            startActivity(Intent.createChooser(i, "choose one"));
+        } catch(Exception e) {
+            //e.toString();
+        }
     }
 
     private void aboutUsOnClick() {

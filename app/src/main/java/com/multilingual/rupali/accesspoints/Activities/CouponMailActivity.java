@@ -32,7 +32,6 @@ public class CouponMailActivity extends AppCompatActivity {
     int targetCustType;
     Integer discount;
     ConstraintLayout targetCustContent;
-    ArrayList<User> userArrayList;
     Button sendMailBT;
     @Override
     protected void onCreate(Bundle savedInstanceState) {

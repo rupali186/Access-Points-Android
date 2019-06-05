@@ -300,7 +300,6 @@ public class SignUpFragment extends Fragment {
             return false;
         }
         else{
-
             RadioButton radioButton = (RadioButton) genderRgrp.findViewById(genderCheckedRadioButtonId);
             gender =radioButton.getText().toString();
         }
@@ -330,7 +329,7 @@ public class SignUpFragment extends Fragment {
         }
         address=new Address(hno,street,state,city,country,uname,landmark,Integer.parseInt(pin),contactNo);
         contactNo=userPhoneCode+" "+contactNo;
-        return  true;
+        return true;
     }
 
 }

@@ -115,8 +115,8 @@ public class EditAccountDetailsFragment extends Fragment {
         dob=sharedPreferences.getString(LoginSharedPref.USER_DOB,"");
         gender=sharedPreferences.getString(LoginSharedPref.USER_GENDER,"");
         userName=sharedPreferences.getString(LoginSharedPref.USER_NAME,"");
-        phone=sharedPreferences.getString(LoginSharedPref.USER_CONTACT_NO,"").substring(3);
-        phoneCode=sharedPreferences.getString(LoginSharedPref.USER_CONTACT_NO,"").substring(0,3);
+        phone=sharedPreferences.getString(LoginSharedPref.USER_CONTACT_NO,"").substring(4);
+        phoneCode=sharedPreferences.getString(LoginSharedPref.USER_CONTACT_NO,"").substring(0,2);
         country=sharedPreferences.getString(LoginSharedPref.USER_COUNTRY,"");
         state=sharedPreferences.getString(LoginSharedPref.USER_STATE,"");
         city=sharedPreferences.getString(LoginSharedPref.USER_CITY,"");
