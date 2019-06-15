@@ -18,7 +18,7 @@ public class AccessPointAddress {
         this.A4 = country;
         this.Mode = "Online";
         this.Type = "residential";
-        this.Partition = "None";
+        this.Partition = "city";
         this.range = range;
 
     }
